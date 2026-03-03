@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import type { Project, Scene } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
+import type { Locale } from '@/lib/i18n'
 
 /** Радиус скругления для всех картинок проекта (обложка и сцены). */
 const IMAGE_ROUNDING_PX = 32
@@ -122,9 +123,37 @@ CoverImageBox.displayName = 'CoverImageBox'
 
 interface ProjectDetailViewProps {
   project: Project
+  locale?: Locale
+  projectsHref?: string
 }
 
-export function ProjectDetailView({ project }: ProjectDetailViewProps) {
+export function ProjectDetailView({
+  project,
+  locale = 'ru',
+  projectsHref = '/projects',
+}: ProjectDetailViewProps) {
+  const copy = locale === 'en'
+    ? {
+        toProjects: 'To projects',
+        closeImage: 'Close',
+        zoomIn: 'Zoom in',
+        zoomOut: 'Zoom out',
+        resetZoom: 'Reset zoom',
+        prevScene: 'Previous scene',
+        nextScene: 'Next scene',
+        imageDialog: 'Image preview',
+      }
+    : {
+        toProjects: 'К проектам',
+        closeImage: 'Закрыть',
+        zoomIn: 'Увеличить',
+        zoomOut: 'Уменьшить',
+        resetZoom: 'Сбросить масштаб',
+        prevScene: 'Предыдущая сцена',
+        nextScene: 'Следующая сцена',
+        imageDialog: 'Просмотр изображения',
+      }
+
   const leftRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
   const [isDesktopLayout, setIsDesktopLayout] = useState(false)
@@ -518,13 +547,13 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
             <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(1.5rem,env(safe-area-inset-top))] pl-8 pr-8 pb-8 overflow-hidden">
               <div className="rounded-2xl border border-white/10 bg-black/25 backdrop-blur-md px-5 py-4 mb-0">
                 <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors font-thin text-xl"
+                  href={projectsHref}
+                  className="inline-flex items-center gap-1 text-white/60 hover:text-white transition-colors font-thin text-xl"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  Закрыть
+                  {copy.toProjects}
                 </Link>
                 <h1 className="text-white font-thin text-lg leading-relaxed mt-2">{project.title}</h1>
               </div>
@@ -583,7 +612,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
           onClick={closeLightbox}
           role="dialog"
           aria-modal="true"
-          aria-label="Просмотр изображения"
+          aria-label={copy.imageDialog}
         >
           <div className="hidden lg:flex absolute top-[max(12px,env(safe-area-inset-top))] right-[max(12px,env(safe-area-inset-right))] items-center gap-2">
             <button
@@ -593,7 +622,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                 zoomOut()
               }}
               className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90"
-              aria-label="Уменьшить"
+              aria-label={copy.zoomOut}
             >
               -
             </button>
@@ -604,7 +633,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                 setLightboxZoom(1)
               }}
               className="h-10 px-3 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90 text-sm"
-              aria-label="Сбросить масштаб"
+              aria-label={copy.resetZoom}
             >
               {Math.round(lightboxZoom * 100)}%
             </button>
@@ -615,7 +644,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                 zoomIn()
               }}
               className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90"
-              aria-label="Увеличить"
+              aria-label={copy.zoomIn}
             >
               +
             </button>
@@ -626,7 +655,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                 closeLightbox()
               }}
               className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90"
-              aria-label="Закрыть"
+              aria-label={copy.closeImage}
             >
               ✕
             </button>
@@ -646,7 +675,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                       zoomOut()
                     }}
                     className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg"
-                    aria-label="Уменьшить"
+                    aria-label={copy.zoomOut}
                   >
                     -
                   </button>
@@ -657,7 +686,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                       setLightboxZoom(1)
                     }}
                     className="h-10 px-3 rounded-full border border-white/60 text-white bg-black/75 shadow-lg text-sm"
-                    aria-label="Сбросить масштаб"
+                    aria-label={copy.resetZoom}
                   >
                     {Math.round(lightboxZoom * 100)}%
                   </button>
@@ -668,7 +697,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                       zoomIn()
                     }}
                     className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg"
-                    aria-label="Увеличить"
+                    aria-label={copy.zoomIn}
                   >
                     +
                   </button>
@@ -680,7 +709,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                     closeLightbox()
                   }}
                   className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg"
-                  aria-label="Закрыть"
+                  aria-label={copy.closeImage}
                 >
                   ✕
                 </button>
@@ -758,13 +787,13 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
         <div className="rounded-2xl border border-white/10 bg-black/35 backdrop-blur-md px-4 pt-3 pb-6">
           <div className="flex items-center justify-between gap-3 pb-8 border-b border-white/10">
             <Link
-              href="/projects"
-              className="inline-flex items-center gap-1.5 text-white/70 active:text-white transition-colors font-thin text-sm"
+              href={projectsHref}
+              className="inline-flex items-center gap-1 text-white/70 active:text-white transition-colors font-thin text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Закрыть
+              {copy.toProjects}
             </Link>
             <p className="text-white/90 font-thin text-sm truncate text-right">{project.title}</p>
           </div>
@@ -787,7 +816,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                   onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
                   disabled={!hasPrevScene}
                   className="h-9 w-9 rounded-full border border-white/20 text-white/85 disabled:opacity-35 disabled:cursor-not-allowed"
-                  aria-label="Предыдущая сцена"
+                  aria-label={copy.prevScene}
                 >
                   <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -798,7 +827,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                   onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
                   disabled={!hasNextScene}
                   className="h-9 w-9 rounded-full border border-white/20 text-white/85 disabled:opacity-35 disabled:cursor-not-allowed"
-                  aria-label="Следующая сцена"
+                  aria-label={copy.nextScene}
                 >
                   <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

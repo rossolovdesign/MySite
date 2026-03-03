@@ -137,3 +137,48 @@
   - подготовка `preparedScenes` + image URL через `useMemo`;
   - `setActiveIndex` с защитой от лишних одинаковых апдейтов;
   - pan/wheel в lightbox batched через `requestAnimationFrame`.
+
+---
+
+## Update 2026-03-03 (SEO + i18n RU/EN)
+
+### SEO
+- Добавлены системные SEO-роуты:
+  - `app/robots.ts` → `/robots.txt` (основной сайт открыт, `/studio` закрыт)
+  - `app/sitemap.ts` → `/sitemap.xml` (включая RU и EN страницы)
+- Введён helper `lib/site.ts` для нормализации `siteUrl` (берётся из env с fallback).
+- Расширены metadata:
+  - `app/layout.tsx`: `metadataBase`, `robots`, `openGraph`, `twitter`, canonical
+  - `app/projects/page.tsx`: canonical + OG/Twitter
+  - `app/projects/[slug]/page.tsx`: динамические metadata по проекту (title/description/OG image).
+
+### Локализация (RU/EN)
+- Добавлен i18n-каркас: `lib/i18n.ts` (`locales`, `defaultLocale`, helpers).
+- Главная:
+  - RU: `/`
+  - EN: `/en` (`app/en/page.tsx`, тексты хардкодом, без CMS, как и планировалось)
+- Проекты:
+  - RU: `/projects`, `/projects/[slug]`
+  - EN: `/en/projects`, `/en/projects/[slug]`
+  - EN-страницы добавлены в `app/en/projects/page.tsx` и `app/en/projects/[slug]/page.tsx`
+- Переключатель языка оставлен **только на главной** (`/` и `/en`):
+  - desktop: внизу справа;
+  - фиксированный размер языковых кругов `80x80`, активный язык — стеклянный, неактивный — без стекла;
+  - hover неактивного языка синхронизирован с кнопкой «Проекты».
+- На `/projects`, `/en/projects` и детальных страницах переключатель языка убран.
+
+### Sanity для двух языков (fallback на RU)
+- Схемы (`sanity/schemaTypes/index.ts`) расширены:
+  - `project`: `titleEn`, `shortDescriptionEn`, `tagsEn`
+  - `scene`: `titleEn`, `descriptionEn`
+- Запросы (`sanity/queries.ts`) расширены:
+  - `getProjectsByLocale(locale)`
+  - `getProjectBySlugAndLocale(slug, locale)`
+  - для EN используется `coalesce(...En, ...RU)` — если EN-поля не заполнены, показывается RU.
+
+### Прочее
+- Telegram-ссылка обновлена на `https://t.me/RossolovDesign` (`app/page.tsx`).
+- Навигационные подписи:
+  - `/projects`: «На главную»;
+  - деталка проекта: «К проектам»;
+  - размер шеврона в кнопках возврата приведён к `16px`, gap до текста — `4px`.

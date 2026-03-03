@@ -17,19 +17,18 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const project = await getProjectBySlugAndLocale(slug, 'ru')
+  const project = await getProjectBySlugAndLocale(slug, 'en')
 
   if (!project) {
     return {
-      title: 'Проект не найден | Иван Россолов',
+      title: 'Project not found | Ivan Rossolov',
       robots: { index: false, follow: false },
     }
   }
 
-  const title = `${project.title} | Иван Россолов — Продуктовый Дизайнер`
-  const description =
-    project.shortDescription || 'Кейс продуктового дизайна: процесс, решения и визуальная система проекта.'
-  const canonical = `/projects/${project.slug.current}`
+  const title = `${project.title} | Ivan Rossolov — Product Designer`
+  const description = project.shortDescription || 'Product design case study: process, decisions and visual system.'
+  const canonical = `/en/projects/${project.slug.current}`
   const ogImage = project.thumbnail ? urlFor(project.thumbnail).width(1200).height(630).quality(85).url() : undefined
 
   return {
@@ -38,8 +37,8 @@ export async function generateMetadata({
     alternates: {
       canonical,
       languages: {
-        ru: canonical,
-        en: `/en/projects/${project.slug.current}`,
+        en: canonical,
+        ru: `/projects/${project.slug.current}`,
       },
     },
     openGraph: {
@@ -58,17 +57,18 @@ export async function generateMetadata({
   }
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectPageEn({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const project = await getProjectBySlugAndLocale(slug, 'ru')
+  const project = await getProjectBySlugAndLocale(slug, 'en')
 
   if (!project) notFound()
 
   return (
     <ProjectDetailView
       project={project}
-      locale="ru"
-      projectsHref="/projects"
+      locale="en"
+      projectsHref="/en/projects"
     />
   )
 }
+

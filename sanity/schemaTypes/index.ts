@@ -13,6 +13,12 @@ export const projectType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'titleEn',
+      title: 'Title (EN)',
+      type: 'string',
+      description: 'Английский заголовок проекта (для /en).',
+    }),
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -29,6 +35,12 @@ export const projectType = defineType({
       description: 'Текст для карточки проекта в списке проектов (/projects). На детальной странице не показывается.',
     }),
     defineField({
+      name: 'shortDescriptionEn',
+      title: 'Краткое описание (EN)',
+      type: 'string',
+      description: 'Английский текст карточки проекта (для /en/projects).',
+    }),
+    defineField({
       name: 'date',
       title: 'Date',
       type: 'datetime',
@@ -40,6 +52,16 @@ export const projectType = defineType({
       type: 'array',
       of: [{ type: 'string' }],
       description: 'Бейджи (теги) проекта. Показываются на карточке в списке и на детальной странице.',
+      options: {
+        layout: 'tags',
+      },
+    }),
+    defineField({
+      name: 'tagsEn',
+      title: 'Tags (EN)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Английские теги проекта (если нужны отдельные от RU).',
       options: {
         layout: 'tags',
       },
@@ -82,10 +104,22 @@ export const sceneType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'titleEn',
+      title: 'Title (EN)',
+      type: 'string',
+      description: 'Английский заголовок сцены (для /en).',
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',
       description: 'Текст сцены. Показывается справа при прокрутке до этой картинки.',
+    }),
+    defineField({
+      name: 'descriptionEn',
+      title: 'Description (EN)',
+      type: 'text',
+      description: 'Английский текст сцены (для /en).',
     }),
     defineField({
       name: 'image',
