@@ -11,6 +11,7 @@ export function Scene3D() {
 
     let animationId: number
     let disposed = false
+    let isAnimating = true
 
     const showOverlay = (message: string) => {
       const el = overlayRef.current
@@ -114,19 +115,37 @@ export function Scene3D() {
       // Отслеживание мыши
       let targetRotationX = 0
       let targetRotationY = Math.PI
+      const hasFinePointer = typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
+      let mouseFrameId: number | null = null
+      let pendingMouseEvent: MouseEvent | null = null
 
-      const onMouseMove = (e: MouseEvent) => {
+      const applyMouseTarget = () => {
+        if (!pendingMouseEvent) {
+          mouseFrameId = null
+          return
+        }
+        const e = pendingMouseEvent
         const mouseX = (e.clientX / window.innerWidth) * 2 - 1
         const mouseY = -(e.clientY / window.innerHeight) * 2 + 1
-        
         targetRotationY = Math.PI + mouseX * 0.5
         targetRotationX = mouseY * 0.3
+        pendingMouseEvent = null
+        mouseFrameId = null
       }
 
-      window.addEventListener('mousemove', onMouseMove)
+      const onMouseMove = (e: MouseEvent) => {
+        pendingMouseEvent = e
+        if (mouseFrameId !== null) return
+        mouseFrameId = requestAnimationFrame(applyMouseTarget)
+      }
+
+      if (hasFinePointer) {
+        window.addEventListener('mousemove', onMouseMove, { passive: true })
+      }
 
       // Анимация
       const animate = () => {
+        if (disposed || !isAnimating) return
         animationId = requestAnimationFrame(animate)
 
         if (model) {
@@ -138,6 +157,15 @@ export function Scene3D() {
       }
 
       animate()
+
+      const onVisibilityChange = () => {
+        isAnimating = !document.hidden
+        if (isAnimating) {
+          cancelAnimationFrame(animationId)
+          animate()
+        }
+      }
+      document.addEventListener('visibilitychange', onVisibilityChange)
 
       // Обработка изменения размера
       const onWindowResize = () => {
@@ -154,8 +182,15 @@ export function Scene3D() {
       // Очистка
       return () => {
         disposed = true
-        window.removeEventListener('mousemove', onMouseMove)
+        if (hasFinePointer) {
+          window.removeEventListener('mousemove', onMouseMove)
+        }
+        if (mouseFrameId !== null) {
+          cancelAnimationFrame(mouseFrameId)
+          mouseFrameId = null
+        }
         window.removeEventListener('resize', onWindowResize)
+        document.removeEventListener('visibilitychange', onVisibilityChange)
         cancelAnimationFrame(animationId)
         renderer.dispose()
         container.removeChild(renderer.domElement)

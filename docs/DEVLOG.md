@@ -101,3 +101,39 @@
 ## Next.js 16
 
 - params/searchParams в page — Promise: `const { slug } = await params`.
+
+---
+
+## Update 2026-03-03 (текущий срез)
+
+### Проект / маршруты
+- `/` теперь серверный page (`app/page.tsx`), 3D оставлен клиентским в `components/Scene3D.tsx`.
+- `/projects/[slug]` переведён в SSG: `generateStaticParams()` в `app/projects/[slug]/page.tsx`.
+- Кнопка главной «Проекты» увеличена до `500x104` (desktop), glass-стиль и анимации синхронизированы с текущим UI.
+
+### Деталь проекта (`components/ProjectDetailView.tsx`)
+- Десктоп и мобилка разделены по интеракциям:
+  - **desktop:** переключение сцен кликом по «язычкам» + мягкий доскролл;
+  - **mobile:** переключение сцен стрелками в нижней карточке, ручной вертикальный скролл сцен отключён.
+- Реализован fullscreen lightbox для сцен (mobile):
+  - открыть по тапу на изображение;
+  - zoom `+/-/100%`, закрытие `Esc/фон/кнопка`;
+  - drag/pan зазумленного изображения.
+- Затемнение неактивных сцен переведено на плавный `opacity`-переход (без мгновенного mount/unmount).
+- Шапки и отступы доработаны:
+  - в desktop sidebar: стеклянная карточка с `Закрыть` + title проекта;
+  - в mobile bottom-card: верхняя строка `Закрыть` + title, актуальные отступы.
+
+### Производительность (без изменения визуала/механик)
+- `next.config.mjs`: включена оптимизация изображений (`remotePatterns` для `cdn.sanity.io`), убран `images.unoptimized`.
+- `sanity/client.ts`: `useCdn: true`.
+- `components/ProjectCardImage.tsx`: добавлен `sizes` для корректной отдачи responsive-изображений.
+- `app/projects/page.tsx`: `prefetch={false}` у карточек проектов (меньше фонового сетевого шума).
+- `components/Scene3D.tsx`:
+  - рендер уже останавливается в hidden-tab;
+  - `mousemove` throttled через `requestAnimationFrame`, только для `pointer: fine`.
+- `components/ProjectDetailView.tsx`:
+  - `CoverImageBox` мемоизирован (`memo`);
+  - подготовка `preparedScenes` + image URL через `useMemo`;
+  - `setActiveIndex` с защитой от лишних одинаковых апдейтов;
+  - pan/wheel в lightbox batched через `requestAnimationFrame`.

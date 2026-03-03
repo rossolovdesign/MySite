@@ -53,7 +53,8 @@ export default async function ProjectsPage() {
                       <Link
                         key={project._id}
                         href={`/projects/${project.slug.current}`}
-                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full"
+                        prefetch={false}
+                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04]"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         {/* 1. Картинка */}

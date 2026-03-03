@@ -102,3 +102,13 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     return null
   }
 }
+
+export async function getProjectSlugs(): Promise<string[]> {
+  try {
+    const query = `*[_type == "project" && defined(slug.current)].slug.current`
+    return await client.fetch(query)
+  } catch (error) {
+    console.error('Error fetching project slugs:', error)
+    return []
+  }
+}

@@ -31,6 +31,7 @@ export function ProjectCardImage({
         src={imageUrl}
         alt={alt}
         fill
+        sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
         className="object-cover group-hover:scale-105 transition-transform duration-300"
         priority={priority}
         onLoad={() => setLoaded(true)}
