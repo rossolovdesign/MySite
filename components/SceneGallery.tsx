@@ -3,7 +3,7 @@
 import { Scene } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
 import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface SceneGalleryProps {
   scenes: Scene[]
@@ -12,7 +12,6 @@ interface SceneGalleryProps {
 }
 
 export function SceneGallery({ scenes, activeSceneId, onSceneChange }: SceneGalleryProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
   const sceneRefs = useRef<Record<string, HTMLDivElement>>({})
 
   useEffect(() => {
@@ -22,7 +21,7 @@ export function SceneGallery({ scenes, activeSceneId, onSceneChange }: SceneGall
   }, [activeSceneId])
 
   return (
-    <div ref={containerRef} className="space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">
+    <div className="space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">
       {scenes.map((scene) => (
         <button
           key={scene._id}

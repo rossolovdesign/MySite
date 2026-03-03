@@ -106,10 +106,7 @@ export function Scene3D() {
         scene.add(model)
       } catch (error) {
         console.error('[v0] Failed to load model:', error)
-        if (!disposed) {
-          container.dataset.scene3dError = 'model'
-          showOverlay('3D модель не загрузилась')
-        }
+        if (!disposed) showOverlay('3D модель не загрузилась')
         return
       }
 

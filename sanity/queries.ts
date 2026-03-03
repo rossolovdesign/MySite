@@ -8,6 +8,7 @@ export interface Scene {
     asset: {
       _id: string
       url: string
+      metadata?: { dimensions?: { width: number; height: number } }
     }
     hotspot?: {
       x: number
@@ -25,13 +26,14 @@ export interface Project {
   slug: {
     current: string
   }
-  description?: string
+  shortDescription?: string
   date?: string
   tags?: string[]
-  thumbnail: {
+  thumbnail?: {
     asset: {
       _id: string
       url: string
+      metadata?: { dimensions?: { width: number; height: number } }
     }
   }
   scenes?: Scene[]
@@ -43,15 +45,28 @@ export async function getProjects(): Promise<Project[]> {
       _id,
       title,
       slug,
-      description,
+      shortDescription,
       date,
       tags,
-      thumbnail,
+      "thumbnail": thumbnail {
+        asset-> {
+          _id,
+          url,
+          metadata { dimensions { width, height } }
+        }
+      },
       scenes[]-> {
         _id,
         title,
         description,
-        image,
+        "image": image {
+          asset-> {
+            _id,
+            url,
+            metadata { dimensions { width, height } }
+          },
+          hotspot
+        },
         order
       }
     }`
@@ -69,15 +84,28 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
       _id,
       title,
       slug,
-      description,
+      shortDescription,
       date,
       tags,
-      thumbnail,
+      "thumbnail": thumbnail {
+        asset-> {
+          _id,
+          url,
+          metadata { dimensions { width, height } }
+        }
+      },
       scenes[]-> {
         _id,
         title,
         description,
-        image,
+        "image": image {
+          asset-> {
+            _id,
+            url,
+            metadata { dimensions { width, height } }
+          },
+          hotspot
+        },
         order
       } | order(order asc)
     }`

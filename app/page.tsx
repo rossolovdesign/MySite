@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 const Scene3D = dynamic(() => import('@/components/Scene3D').then(mod => mod.Scene3D), {
@@ -11,12 +12,8 @@ const Scene3D = dynamic(() => import('@/components/Scene3D').then(mod => mod.Sce
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false)
 
-  const handleNavigate = () => {
-    window.location.href = '/projects'
-  }
-
   return (
-    <main className="w-screen h-screen relative overflow-hidden bg-[#00060a]" suppressHydrationWarning>
+    <main className="w-screen h-screen relative overflow-hidden bg-[#00060a]">
       {/* Background with radial gradient - Full coverage */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,#002033_0%,#00060a_100%)]" />
 
@@ -78,14 +75,14 @@ export default function Home() {
         {/* Content Row - Aligned with heading edges */}
         <div className="flex items-start justify-between w-full gap-12 lg:gap-20" style={{ maxWidth: '1400px', width: '100%' }}>
           {/* Left Column - Aligns with left edge of heading */}
-          <div className="flex flex-col gap-6 flex-shrink-0 animate-in fade-in duration-700" style={{ maxWidth: '280px', textAlign: 'left' }} suppressHydrationWarning>
+          <div className="flex flex-col gap-6 flex-shrink-0 animate-in fade-in duration-700" style={{ maxWidth: '280px', textAlign: 'left' }}>
             <div className="inline-flex h-12 items-center justify-center gap-2.5 px-4 py-3 bg-[#affc41] rounded-full border border-white/30 whitespace-nowrap flex-shrink-0">
               <span className="font-extralight text-[#00060a] text-2xl tracking-wider whitespace-nowrap">
                 PRODUCT DESIGNER
               </span>
             </div>
 
-            <div className="space-y-0 leading-custom" suppressHydrationWarning>
+            <div className="space-y-0 leading-custom">
               <p className="font-extralight text-white text-2xl">Работаю с 2019 года</p>
               <p className="font-extralight text-white text-2xl">30+ проектов</p>
               <p className="font-extralight text-white text-2xl">5 крупных проектов</p>
@@ -151,18 +148,16 @@ export default function Home() {
       </div>
 
       {/* Projects Button - Fixed Bottom Left */}
-      <button
-        onClick={handleNavigate}
+      <Link
+        href="/projects"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className="hidden md:flex absolute left-8 lg:left-12 bottom-8 lg:bottom-12 items-center gap-3 px-6 py-4 rounded-2xl border border-white/25 cursor-pointer transition-all duration-300 group z-20 animate-in fade-in duration-700 delay-200 w-96"
+        style={{
+          background: isHovered ? 'rgba(0, 161, 255, 0.35)' : 'rgba(0, 161, 255, 0.25)',
+          backdropFilter: 'blur(2px)',
+        }}
       >
-        <style jsx>{`
-          button {
-            background: ${isHovered ? 'rgba(0, 161, 255, 0.35)' : 'rgba(0, 161, 255, 0.25)'};
-            backdrop-filter: blur(2px);
-          }
-        `}</style>
         <span className="font-extralight text-white text-2xl">Проекты</span>
         <div className="ml-auto inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/30 transition-all group-hover:translate-x-1 group-hover:scale-110">
           <svg
@@ -175,7 +170,7 @@ export default function Home() {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </div>
-      </button>
+      </Link>
 
       {/* Mobile Layout */}
       <div className="md:hidden absolute inset-0 flex flex-col items-center justify-center px-6 py-8 z-20 pt-24 space-y-6 pb-40">
@@ -192,7 +187,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="space-y-3 text-center" suppressHydrationWarning>
+          <div className="space-y-3 text-center">
             <p className="font-extralight text-white leading-6" style={{ fontSize: 'clamp(16px, 5vw, 20px)', lineHeight: '24px' }}>Работаю с 2019 года</p>
             <p className="font-extralight text-white leading-6" style={{ fontSize: 'clamp(16px, 5vw, 20px)', lineHeight: '24px' }}>30+ проектов</p>
             <p className="font-extralight text-white leading-6" style={{ fontSize: 'clamp(16px, 5vw, 20px)', lineHeight: '24px' }}>5 крупных проектов</p>
@@ -228,18 +223,16 @@ export default function Home() {
       </div>
 
       {/* Mobile Projects Button - Fixed to bottom */}
-      <button
-        onClick={handleNavigate}
+      <Link
+        href="/projects"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className="md:hidden fixed bottom-7 left-7 right-7 z-30 px-6 py-4 rounded-2xl border border-white/25 cursor-pointer transition-all duration-300 group flex items-center gap-3"
+        style={{
+          background: isHovered ? 'rgba(0, 161, 255, 0.35)' : 'rgba(0, 161, 255, 0.25)',
+          backdropFilter: 'blur(2px)',
+        }}
       >
-        <style jsx>{`
-          button {
-            background: ${isHovered ? 'rgba(0, 161, 255, 0.35)' : 'rgba(0, 161, 255, 0.25)'};
-            backdrop-filter: blur(2px);
-          }
-        `}</style>
         <span className="font-extralight text-white text-lg">Проекты</span>
         <div className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-full border border-white/30 transition-all group-hover:translate-x-1 group-hover:scale-110">
           <svg
@@ -252,7 +245,7 @@ export default function Home() {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </div>
-      </button>
+      </Link>
     </main>
   )
 }

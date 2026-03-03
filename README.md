@@ -25,7 +25,6 @@ A modern product design portfolio built with Next.js 16 and Sanity CMS, featurin
 │   ├── layout.tsx               # Root layout
 │   └── globals.css              # Global styles
 ├── components/
-│   ├── ProjectCard.tsx          # Project card component
 │   ├── SceneGallery.tsx         # Scene gallery component
 │   └── SceneInfo.tsx            # Scene detail component
 ├── sanity/

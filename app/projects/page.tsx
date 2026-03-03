@@ -107,7 +107,7 @@ export default async function ProjectsPage() {
                         className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 animate-in fade-in flex flex-col h-full"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        {/* Project Image Container */}
+                        {/* 1. Картинка */}
                         <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-[#003d5c] to-[#00060a] flex-shrink-0">
                           {imageUrl ? (
                             <Image
@@ -115,15 +115,21 @@ export default async function ProjectsPage() {
                               alt={project.title}
                               fill
                               className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              priority={index === 0}
                             />
                           ) : (
                             <div className="absolute inset-0" />
                           )}
                         </div>
 
-                        {/* Project Info */}
-                        <div className="p-5 space-y-3 flex flex-col flex-1">
-                          {/* Tags */}
+                        {/* 2. Краткое описание и 3. Бейджи */}
+                        <div className="p-5 flex flex-col flex-1 gap-3">
+                          <h3 className="text-white font-extralight text-xl leading-custom">{project.title}</h3>
+                          {project.shortDescription && (
+                            <p className="text-white/60 font-extralight text-sm leading-custom line-clamp-2 flex-1">
+                              {project.shortDescription}
+                            </p>
+                          )}
                           {project.tags && project.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2">
                               {project.tags.map((tag) => (
@@ -136,16 +142,6 @@ export default async function ProjectsPage() {
                               ))}
                             </div>
                           )}
-
-                          {/* Title and Description */}
-                          <div className="flex-1">
-                            <h3 className="text-white font-extralight text-xl leading-custom mb-2">{project.title}</h3>
-                            {project.description && (
-                              <p className="text-white/60 font-extralight text-sm leading-custom line-clamp-2">
-                                {project.description}
-                              </p>
-                            )}
-                          </div>
                         </div>
 
                         {/* Hover Arrow */}
