@@ -54,20 +54,6 @@ export async function getProjects(): Promise<Project[]> {
           url,
           metadata { dimensions { width, height } }
         }
-      },
-      scenes[]-> {
-        _id,
-        title,
-        description,
-        "image": image {
-          asset-> {
-            _id,
-            url,
-            metadata { dimensions { width, height } }
-          },
-          hotspot
-        },
-        order
       }
     }`
     

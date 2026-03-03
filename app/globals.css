@@ -20,6 +20,7 @@
 @layer base {
   body {
     @apply bg-[#00060a] text-white;
+    overflow: hidden;
     background: radial-gradient(50% 50% at 75% 50%, rgba(0,6,10,1) 0%, rgba(0,32,51,1) 51%, rgba(0,6,10,1) 100%);
   }
 }
@@ -32,8 +33,8 @@
 
   .grid-bg {
     background-image: 
-      linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
     background-size: 95.24px 95.24px;
   }
 
@@ -94,6 +95,7 @@
   }
 }
 
+/* Размытое пятно на фоне: активное переливание (без сдвига расположения) */
 /* Минималистичный скроллбар: белый 30%, вертикальные отступы 32px, без стрелок */
 .scrollbar-project {
   scrollbar-width: thin;
@@ -124,6 +126,36 @@
 
 .scrollbar-project::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.45);
+}
+
+/* Скрыть скроллбар, но оставить скролл */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Skeleton loader для картинок */
+.skeleton-image {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geologica } from 'next/font/google'
+import { SiteBackground } from '@/components/SiteBackground'
 import './globals.css'
 
 const geologica = Geologica({ subsets: ['latin', 'cyrillic'] })
@@ -35,7 +36,8 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${geologica.className} antialiased`}>
-        {children}
+        <SiteBackground />
+        <div className="relative z-10">{children}</div>
       </body>
     </html>
   )

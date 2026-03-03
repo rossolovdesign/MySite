@@ -29,7 +29,7 @@ export function Scene3D() {
       const height = container.clientHeight
 
       if (!width || !height) {
-        if (!disposed) showOverlay('3D сцена: нет места для рендера')
+        if (!disposed) showOverlay('Ошибка загрузки 3D. Перезагрузите страницу')
         return
       }
 
@@ -51,11 +51,12 @@ export function Scene3D() {
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
       } catch (error) {
         console.error('[v0] Failed to init WebGL renderer:', error)
-        if (!disposed) showOverlay('WebGL недоступен — 3D не будет отображаться')
+        if (!disposed) showOverlay('Ошибка загрузки 3D. Перезагрузите страницу')
         return
       }
       renderer.setSize(width, height)
-      renderer.setPixelRatio(window.devicePixelRatio)
+      // Ограничиваем pixelRatio для снижения нагрузки на GPU на Retina-экранах
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75))
       renderer.setClearColor(0x000000, 0)
       container.appendChild(renderer.domElement)
 
@@ -106,7 +107,7 @@ export function Scene3D() {
         scene.add(model)
       } catch (error) {
         console.error('[v0] Failed to load model:', error)
-        if (!disposed) showOverlay('3D модель не загрузилась')
+        if (!disposed) showOverlay('Ошибка загрузки 3D. Перезагрузите страницу')
         return
       }
 
@@ -172,9 +173,9 @@ export function Scene3D() {
     <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden relative">
       <div
         ref={overlayRef}
-        className="pointer-events-none absolute inset-0 hidden items-center justify-center bg-black/30 text-white/70 text-sm"
+        className="pointer-events-none absolute inset-0 hidden items-center justify-center bg-black/30 text-white/70 text-sm font-thin text-center px-4"
       >
-        3D модель не загрузилась
+        Ошибка загрузки 3D. Перезагрузите страницу
       </div>
     </div>
   )

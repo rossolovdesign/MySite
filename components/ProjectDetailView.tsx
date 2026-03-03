@@ -9,10 +9,10 @@ import { urlFor } from '@/sanity/image'
 const IMAGE_ROUNDING_PX = 32
 
 const SECTION_GAP_PX = 32
-/** Высота секции: видимая область минус 64px (сверху и снизу по 32px «выступа»). Учитываем отступы обёртки (2rem + 64px под скроллбар). */
-const SECTION_HEIGHT_CSS = `calc(100vh - 2rem - 64px - 128px)`
+/** Высота секции: меньше высоты скролл-области на 2×32px, чтобы были видны выступы соседних кадров (по 32px сверху и снизу). */
+const SECTION_HEIGHT_CSS = 'calc(100% - 64px)'
 
-/** Контейнер по размеру картинки (aspect ratio) со скруглениями. maxHeight можно задать (например "100%") для заполнения родителя. */
+/** Контейнер по размеру картинки (aspect ratio) со скруглениями. Пока картинка грузится — skeleton. */
 function CoverImageBox({
   imageUrl,
   alt,
@@ -26,32 +26,67 @@ function CoverImageBox({
   defaultAspectRatio?: number
   maxHeight?: string
 }) {
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    if (!imageUrl) {
+      setLoaded(false)
+      return
+    }
+    setLoaded(false)
+  }, [imageUrl])
+
   const aspectRatio = dimensions ? dimensions.width / dimensions.height : defaultAspectRatio
-  const effectiveMaxH = maxHeight ?? 'calc(100vh - 2rem)'
+  // Максимальная высота: ограничиваем, чтобы на очень больших экранах контейнер не растягивался бесконечно.
+  const effectiveMaxH = maxHeight ?? 'min(800px, calc(100vh - 4rem))'
   const widthFromHeight = `calc(${effectiveMaxH} * ${aspectRatio})`
   const boxStyle: React.CSSProperties = {
     aspectRatio: `${dimensions?.width ?? 16}/${dimensions?.height ?? 10}`,
     maxHeight: effectiveMaxH,
     width: `min(100%, ${widthFromHeight})`,
     minHeight: 0,
-    maxWidth: '100%',
+    // Фиксируем максимальную ширину контента, чтобы контейнер скелетона не растягивался на весь экран.
+    maxWidth: 'min(100%, 1400px)',
     overflow: 'hidden',
     clipPath: `inset(0 round ${IMAGE_ROUNDING_PX}px)`,
     ...(imageUrl && {
       backgroundImage: `url(${imageUrl})`,
-      backgroundSize: 'cover',
+      // Картинка целиком помещается в контейнере со скруглениями, без обрезки по краям.
+      backgroundSize: 'contain',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     }),
   }
 
+  const showSkeleton = imageUrl && !loaded
+
   return (
     <div
-      className="shrink-0 box-border max-w-full border-0 p-0 m-0"
-      style={boxStyle}
+      className="shrink-0 box-border max-w-full border-0 p-0 m-0 relative"
+      style={{
+        ...boxStyle,
+        // Размер контейнера строго по пропорциям фото, без растягивания по секции — скелетон и скругления совпадают с фоткой.
+        alignSelf: 'center',
+      }}
       role={imageUrl ? 'img' : undefined}
       aria-label={imageUrl ? alt : undefined}
-    />
+    >
+      {showSkeleton && (
+        <div
+          className="absolute inset-0 skeleton-image transition-opacity duration-300"
+          style={{ clipPath: `inset(0 round ${IMAGE_ROUNDING_PX}px)` }}
+          aria-hidden
+        />
+      )}
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt=""
+          className="absolute w-0 h-0 opacity-0 pointer-events-none"
+          onLoad={() => setLoaded(true)}
+        />
+      )}
+    </div>
   )
 }
 
@@ -72,7 +107,9 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
-    if (!sectionRefs.current.length) return
+    if (!sectionRefs.current.length || !leftRef.current) return
+
+    const rootEl = leftRef.current
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -92,9 +129,8 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
         }
       },
       {
-        root: null,
-        rootMargin: '-40% 0px -40% 0px',
-        threshold: [0, 0.25, 0.5, 0.75, 1],
+        root: rootEl,
+        threshold: [0.7],
       }
     )
 
@@ -114,34 +150,47 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
   const scrollToSection = (index: number) => {
     const el = sectionRefs.current[index]
     if (el && leftRef.current) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 
+  const prevActiveIndex = useRef<number | null>(null)
+
+  // Начальное положение скролла полностью вверху (scrollTop = 0).
   useEffect(() => {
-    if (sortedScenes.length > 0 && sectionRefs.current[0] && leftRef.current) {
-      sectionRefs.current[0].scrollIntoView({ block: 'start' })
+    if (leftRef.current) leftRef.current.scrollTop = 0
+  }, [])
+
+  // Доскраливание: когда активная сцена переключилась по скроллу, мягко центрируем её (не на первом рендере).
+  useEffect(() => {
+    if (!sortedScenes.length) return
+    if (prevActiveIndex.current === null) {
+      prevActiveIndex.current = activeIndex
+      return
     }
-  }, [sortedScenes.length])
+    if (prevActiveIndex.current === activeIndex) return
+    prevActiveIndex.current = activeIndex
+    const id = requestAnimationFrame(() => scrollToSection(activeIndex))
+    return () => cancelAnimationFrame(id)
+  }, [activeIndex])
 
   return (
-    <main className="h-screen w-screen flex overflow-hidden bg-[#00060a]">
-      {/* Единый фон для левого и правого блока */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,#002033_0%,#00060a_100%)] pointer-events-none z-0" />
-
+    <main className="h-screen w-screen flex overflow-hidden">
       <div className="relative z-10 flex flex-1 min-w-0 h-full">
-        {/* Left: scrollable images. Обёртка с безопасными отступами и вертикальными отступами под скроллбар (32px). */}
-        <div className="flex-1 min-w-0 h-full flex flex-col pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] overflow-hidden">
-          <div className="pt-8 pb-8 flex-1 min-h-0 flex flex-col overflow-hidden">
+        {/* Left: scrollable images. Горизонтальные безопасные отступы. */}
+        <div className="flex-1 min-w-0 h-full flex flex-col pl-[max(1.25rem,env(safe-area-inset-left))] pr-[max(1.25rem,env(safe-area-inset-right))] overflow-hidden">
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             <div
               ref={leftRef}
-              className="scrollbar-project flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
-              style={{ scrollSnapType: 'y mandatory' }}
+              className="scrollbar-hide flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-2"
+              style={{}}
             >
-              {/* Секции: отступ 32px между фото всегда; при скролле сверху/снизу виден выступ соседнего; неактивный выступ затемнён */}
+              {/* Секции: первая имеет безопасный отступ 32px сверху, между фото — 32px; при скролле видны выступы соседних кадров. */}
               {sortedScenes.map((scene, i) => {
                 const sceneImageUrl = scene.image ? urlFor(scene.image).width(1600).height(1200).quality(85).url() : null
                 const isActive = activeIndex === i
+                const isFirst = i === 0
+                const isLast = i === sortedScenes.length - 1
                 return (
                   <section
                     key={scene._id}
@@ -150,12 +199,12 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                     }}
                     className="relative w-full flex-shrink-0 flex items-center justify-center box-border"
                     style={{
-                      scrollSnapAlign: 'start',
-                      scrollMarginTop: i === 0 ? 0 : 64,
                       minHeight: SECTION_HEIGHT_CSS,
                       height: SECTION_HEIGHT_CSS,
-                      marginBottom: `${SECTION_GAP_PX}px`,
+                      marginTop: isFirst ? SECTION_GAP_PX : 0,
+                      marginBottom: isLast ? SECTION_GAP_PX : SECTION_GAP_PX,
                     }}
+                    onClick={() => scrollToSection(i)}
                   >
                     <CoverImageBox
                       imageUrl={sceneImageUrl}
@@ -179,10 +228,10 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
         </div>
 
         {/* Right: фиксированный блок + переключатель по заголовкам внизу */}
-        <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(1.5rem,env(safe-area-inset-top))] px-8 pb-8 overflow-hidden scrollbar-project">
+        <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(1.5rem,env(safe-area-inset-top))] px-8 pb-8 overflow-hidden">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors font-extralight text-2xl mb-6"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors font-thin text-2xl mb-6"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -190,14 +239,14 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
             Проекты
           </Link>
 
-          <h1 className="text-white font-extralight text-4xl leading-custom">{project.title}</h1>
+          <h1 className="text-white font-semibold text-4xl leading-custom">{project.title}</h1>
 
-          <div className="mt-12 flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300">
+          <div className="mt-12 flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
             {activeScene ? (
               <div className="space-y-4">
-                <h2 className="text-white/90 font-extralight text-2xl leading-custom">{activeScene.title}</h2>
+                <h2 className="text-white/90 font-thin text-2xl leading-custom">{activeScene.title}</h2>
                 {activeScene.description && (
-                  <p className="text-white/70 font-extralight text-base leading-relaxed">{activeScene.description}</p>
+                  <p className="text-white/70 font-thin text-base leading-relaxed">{activeScene.description}</p>
                 )}
               </div>
             ) : (
@@ -207,7 +256,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-full border border-[#affc41]/40 text-[#affc41] font-extralight whitespace-nowrap"
+                        className="text-xs px-2.5 py-1 rounded-full border border-[#affc41]/40 text-[#affc41] font-thin whitespace-nowrap"
                       >
                         {tag}
                       </span>
@@ -226,7 +275,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
                   key={index}
                   type="button"
                   onClick={() => scrollToSection(index)}
-                  className={`text-left font-extralight text-sm transition-colors hover:text-white ${
+                  className={`text-left font-thin text-sm transition-colors hover:text-white ${
                     activeIndex === index ? 'text-white' : 'text-white/50'
                   }`}
                 >
@@ -242,7 +291,7 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-20 p-4 bg-gradient-to-b from-black/60 to-transparent">
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors font-extralight text-xl"
+          className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors font-thin text-xl"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -251,11 +300,11 @@ export function ProjectDetailView({ project }: ProjectDetailViewProps) {
         </Link>
       </div>
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 p-4 bg-gradient-to-t from-black/80 to-transparent">
-        <p className="text-white font-extralight text-lg">
+        <p className="text-white font-thin text-lg">
           {activeScene ? activeScene.title : project.title}
         </p>
         {activeScene?.description && (
-          <p className="text-white/70 font-extralight text-sm line-clamp-2 mt-1">
+          <p className="text-white/70 font-thin text-sm line-clamp-2 mt-1">
             {activeScene.description}
           </p>
         )}
