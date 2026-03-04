@@ -5,20 +5,8 @@ export interface Scene {
   _id: string
   title: string
   description?: string
-  image: {
-    asset: {
-      _id: string
-      url: string
-      metadata?: { dimensions?: { width: number; height: number } }
-    }
-    hotspot?: {
-      x: number
-      y: number
-      height: number
-      width: number
-    }
-  }
-  order?: number
+  mediaType?: 'image' | 'gif' | 'lottie'
+  mediaFileUrl?: string
 }
 
 export interface Project {
@@ -130,16 +118,9 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
         _id,
         title,
         description,
-        "image": image {
-          asset-> {
-            _id,
-            url,
-            metadata { dimensions { width, height } }
-          },
-          hotspot
-        },
-        order
-      } | order(order asc)
+        mediaType,
+        "mediaFileUrl": mediaFile.asset->url
+      }
     }`
     
     return await client.fetch(query, { slug })
@@ -178,16 +159,9 @@ export async function getProjectBySlugAndLocale(slug: string, locale: Locale = '
         _id,
         "title": ${sceneTitleExpr},
         "description": ${sceneDescriptionExpr},
-        "image": image {
-          asset-> {
-            _id,
-            url,
-            metadata { dimensions { width, height } }
-          },
-          hotspot
-        },
-        order
-      } | order(order asc)
+        mediaType,
+        "mediaFileUrl": mediaFile.asset->url
+      }
     }`
 
     return await client.fetch(query, { slug })

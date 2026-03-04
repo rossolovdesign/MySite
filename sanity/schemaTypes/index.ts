@@ -149,26 +149,59 @@ export const sceneType = defineType({
       description: 'Английский текст сцены (для /en).',
     }),
     defineField({
-      name: 'image',
-      title: 'Image',
-      type: 'image',
-      description: 'Картинка блока в левой колонке на детальной странице проекта.',
+      name: 'mediaType',
+      title: 'Тип медиа',
+      type: 'string',
+      initialValue: 'image',
       options: {
-        hotspot: true,
+        list: [
+          { title: 'Image / Photo', value: 'image' },
+          { title: 'GIF', value: 'gif' },
+          { title: 'Lottie (JSON)', value: 'lottie' },
+        ],
+        layout: 'radio',
       },
-      validation: (rule) => rule.required(),
+      description: 'Выберите тип контента для сцены: фото, GIF или Lottie.',
     }),
     defineField({
-      name: 'order',
-      title: 'Order',
-      type: 'number',
-      description: 'Порядок блока на детальной странице (меньше число — выше).',
+      name: 'mediaFile',
+      title: 'Media File',
+      type: 'file',
+      options: {
+        accept: '.json,application/json,image/*,.gif,image/gif',
+      },
+      description: 'Единое поле файла для Image/GIF/Lottie JSON в зависимости от выбранного типа медиа.',
     }),
   ],
   preview: {
     select: {
       title: 'title',
-      media: 'image',
+      media: 'mediaFile',
+      mediaType: 'mediaType',
+      mediaFileAsset: 'mediaFile.asset',
+    },
+    prepare(selection) {
+      const { title, mediaType, mediaFileAsset, media } = selection as {
+        title?: string
+        mediaType?: string
+        mediaFileAsset?: unknown
+        media?: unknown
+      }
+
+      const resolvedType =
+        mediaType === 'lottie'
+          ? 'Lottie'
+          : mediaType === 'gif'
+            ? 'GIF'
+            : mediaType === 'image' || mediaFileAsset || media
+              ? 'Image'
+              : 'Image'
+
+      return {
+        title: title || 'Untitled scene',
+        subtitle: `Type: ${resolvedType}`,
+        media,
+      }
     },
   },
 })

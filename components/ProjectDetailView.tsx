@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import type { Project, Scene } from '@/sanity/queries'
-import { urlFor } from '@/sanity/image'
 import type { Locale } from '@/lib/i18n'
 
 /** Радиус скругления для всех картинок проекта (обложка и сцены). */
@@ -17,12 +16,12 @@ const SECTION_PEEK_PX = 32
  * - видимый кусочек соседей = 32px сверху и снизу
  * => высота активной секции: H - 2 * (gap + peek) = H - 128px
  */
-const SECTION_HEIGHT_CSS = `calc(100% - ${2 * (SECTION_GAP_PX + SECTION_PEEK_PX)}px)`
 const SECTION_HEIGHT_VH_CSS = `calc(100vh - ${2 * (SECTION_GAP_PX + SECTION_PEEK_PX)}px)`
 const MOBILE_SCROLL_MARGIN_TOP_CSS = 'calc(80px + env(safe-area-inset-top))'
 const MOBILE_SAFE_PAD_X_LEFT = 'max(16px, env(safe-area-inset-left))'
 const MOBILE_SAFE_PAD_X_RIGHT = 'max(16px, env(safe-area-inset-right))'
 const MOBILE_SAFE_PAD_BOTTOM = 'max(14px, env(safe-area-inset-bottom))'
+type SceneMediaType = 'image' | 'gif' | 'lottie'
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
@@ -30,17 +29,21 @@ function clamp(value: number, min: number, max: number) {
 
 /** Контейнер по размеру картинки (aspect ratio) со скруглениями. Пока картинка грузится — skeleton. */
 const CoverImageBox = memo(function CoverImageBox({
+  mediaType = 'image',
   imageUrl,
+  lottieFileUrl,
   alt,
-  dimensions,
+  precomputedAspectRatio,
   defaultAspectRatio = 16 / 10,
   maxHeight,
   dimmed = false,
   onOpenImage,
 }: {
+  mediaType?: SceneMediaType
   imageUrl: string | null
+  lottieFileUrl?: string | null
   alt: string
-  dimensions?: { width: number; height: number }
+  precomputedAspectRatio?: number | null
   defaultAspectRatio?: number
   maxHeight?: string
   dimmed?: boolean
@@ -48,8 +51,15 @@ const CoverImageBox = memo(function CoverImageBox({
 }) {
   const [loaded, setLoaded] = useState(false)
   const [measuredAspectRatio, setMeasuredAspectRatio] = useState<number | null>(null)
+  const lottieContainerRef = useRef<HTMLDivElement>(null)
+  const isLottie = mediaType === 'lottie' && Boolean(lottieFileUrl)
 
   useEffect(() => {
+    if (isLottie) {
+      setLoaded(true)
+      setMeasuredAspectRatio(null)
+      return
+    }
     if (!imageUrl) {
       setLoaded(false)
       setMeasuredAspectRatio(null)
@@ -57,9 +67,36 @@ const CoverImageBox = memo(function CoverImageBox({
     }
     setLoaded(false)
     setMeasuredAspectRatio(null)
-  }, [imageUrl])
+  }, [imageUrl, isLottie])
 
-  const aspectRatio = measuredAspectRatio ?? (dimensions ? dimensions.width / dimensions.height : defaultAspectRatio)
+  useEffect(() => {
+    if (!isLottie || !lottieFileUrl || !lottieContainerRef.current) return
+
+    let disposed = false
+    let animation: { destroy: () => void } | null = null
+
+    const run = async () => {
+      const lottie = await import('lottie-web')
+      if (disposed || !lottieContainerRef.current) return
+      animation = lottie.default.loadAnimation({
+        container: lottieContainerRef.current,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: lottieFileUrl,
+      })
+      setLoaded(true)
+    }
+
+    run()
+
+    return () => {
+      disposed = true
+      animation?.destroy()
+    }
+  }, [isLottie, lottieFileUrl])
+
+  const aspectRatio = measuredAspectRatio ?? precomputedAspectRatio ?? defaultAspectRatio
   // Максимальная высота: ограничиваем, чтобы на очень больших экранах контейнер не растягивался бесконечно.
   const effectiveMaxH = maxHeight ?? 'min(800px, calc(100vh - 4rem))'
   const widthFromHeight = `calc(${effectiveMaxH} * ${aspectRatio})`
@@ -72,20 +109,20 @@ const CoverImageBox = memo(function CoverImageBox({
     borderRadius: IMAGE_ROUNDING_PX,
   }
 
-  const showSkeleton = imageUrl && !loaded
+  const showSkeleton = !isLottie && imageUrl && !loaded
 
   return (
     <div
-      className={`shrink-0 box-border max-w-full border-0 p-0 m-0 relative ${imageUrl && onOpenImage ? 'cursor-zoom-in' : ''}`}
+      className={`shrink-0 box-border max-w-full border-0 p-0 m-0 relative ${!isLottie && imageUrl && onOpenImage ? 'cursor-zoom-in' : ''}`}
       style={{
         ...boxStyle,
         // Размер контейнера строго по пропорциям фото, без растягивания по секции — скелетон и скругления совпадают с фоткой.
         alignSelf: 'center',
       }}
-      role={imageUrl ? 'img' : undefined}
-      aria-label={imageUrl ? alt : undefined}
+      role={imageUrl || isLottie ? 'img' : undefined}
+      aria-label={imageUrl || isLottie ? alt : undefined}
       onClick={(event) => {
-        if (!onOpenImage || !imageUrl) return
+        if (isLottie || !onOpenImage || !imageUrl) return
         event.stopPropagation()
         onOpenImage(imageUrl, alt)
       }}
@@ -110,6 +147,13 @@ const CoverImageBox = memo(function CoverImageBox({
             }
             setLoaded(true)
           }}
+        />
+      )}
+      {isLottie && lottieFileUrl && (
+        <div
+          ref={lottieContainerRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden
         />
       )}
       <div
@@ -165,17 +209,56 @@ export function ProjectDetailView({
 
   const sortedScenes = useMemo(() => {
     if (!project.scenes?.length) return []
-    return [...project.scenes].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    return project.scenes
   }, [project.scenes])
 
   const preparedScenes = useMemo(
     () =>
       sortedScenes.map((scene) => ({
         ...scene,
-        imageUrl: scene.image ? urlFor(scene.image).width(1600).quality(85).url() : null,
+        sceneMediaType:
+          scene.mediaType === 'lottie' || scene.mediaType === 'gif' || scene.mediaType === 'image'
+            ? scene.mediaType
+            : 'image',
+        lottieFileUrl:
+          (scene.mediaType === 'lottie'
+            ? scene.mediaFileUrl ?? null
+            : null),
+        imageUrl:
+          scene.mediaType === 'image' || scene.mediaType === 'gif'
+            ? scene.mediaFileUrl ?? null
+            : null,
       })),
     [sortedScenes]
   )
+  const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    const candidates = preparedScenes.filter(
+      (scene) => scene.sceneMediaType !== 'lottie' && scene.imageUrl && !mediaAspectRatios[scene.imageUrl]
+    )
+    if (!candidates.length) return
+
+    let cancelled = false
+    candidates.forEach((scene) => {
+      const src = scene.imageUrl
+      if (!src) return
+      const probe = new Image()
+      probe.decoding = 'async'
+      probe.onload = () => {
+        if (cancelled || probe.naturalWidth <= 0 || probe.naturalHeight <= 0) return
+        setMediaAspectRatios((prev) => {
+          if (prev[src]) return prev
+          return { ...prev, [src]: probe.naturalWidth / probe.naturalHeight }
+        })
+      }
+      probe.src = src
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [preparedScenes, mediaAspectRatios])
 
   const sectionsCount = preparedScenes.length
   const [activeIndex, setActiveIndex] = useState(0)
@@ -199,10 +282,10 @@ export function ProjectDetailView({
   }, [])
 
   useEffect(() => {
+    if (!isDesktopLayout) return
     if (!sectionRefs.current.length || !leftRef.current) return
 
     const rootEl = leftRef.current
-    const threshold = isDesktopLayout ? 0.55 : 0.2
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -223,7 +306,7 @@ export function ProjectDetailView({
       },
       {
         root: rootEl,
-        threshold: [threshold],
+        threshold: [0.55],
       }
     )
 
@@ -235,10 +318,6 @@ export function ProjectDetailView({
   }, [sectionsCount, isDesktopLayout])
 
   const activeScene: Scene | null = preparedScenes[activeIndex] ?? null
-
-  const sectionTitles = useMemo(() => {
-    return preparedScenes.map((s, i) => ({ index: i, label: s.title }))
-  }, [preparedScenes])
 
   const autoScrollRef = useRef(false)
   const scrollDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -521,7 +600,7 @@ export function ProjectDetailView({
                         ref={(el) => {
                           sectionRefs.current[i] = el
                         }}
-                        className="relative w-full flex-shrink-0 flex items-center justify-center box-border min-h-0 h-auto 2xl:min-h-[calc(100%-128px)] 2xl:h-[calc(100%-128px)]"
+                        className="relative w-full flex-shrink-0 flex items-center justify-center box-border min-h-0 h-auto"
                         style={{
                           marginTop: isFirst ? SECTION_GAP_PX : 0,
                           marginBottom: isLast ? SECTION_GAP_PX : SECTION_GAP_PX,
@@ -538,9 +617,11 @@ export function ProjectDetailView({
                         }}
                       >
                         <CoverImageBox
+                          mediaType={scene.sceneMediaType}
                           imageUrl={scene.imageUrl}
+                          lottieFileUrl={scene.lottieFileUrl}
                           alt={scene.title}
-                          dimensions={scene.image?.asset?.metadata?.dimensions}
+                          precomputedAspectRatio={scene.imageUrl ? mediaAspectRatios[scene.imageUrl] ?? null : null}
                           defaultAspectRatio={4 / 3}
                           maxHeight={SECTION_HEIGHT_VH_CSS}
                           dimmed={!isActive}
@@ -565,8 +646,8 @@ export function ProjectDetailView({
                   </svg>
                   {copy.toProjects}
                 </Link>
-                <div className="mt-2 border-t border-white/15" aria-hidden />
-                <h1 className="text-white/95 font-thin text-xl leading-snug mt-2">{project.title}</h1>
+                <div className="mt-3 border-t border-white/15" aria-hidden />
+                <h1 className="text-white/95 font-thin text-xl leading-snug mt-3">{project.title}</h1>
                 {project.collaboration?.url && project.collaboration.title && (
                   <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-thin">
                     {copy.collaborationWith}{' '}
@@ -608,23 +689,6 @@ export function ProjectDetailView({
                 )}
               </div>
 
-              {/* Переключатель по заголовкам — вертикальный список */}
-              {sectionTitles.length > 0 && (
-                <nav className="flex flex-col gap-2 pt-6 mt-auto flex-shrink-0 border-t border-white/10">
-                  {sectionTitles.map(({ index, label }) => (
-                    <button
-                      key={index}
-                      type="button"
-                      onClick={() => goToSection(index)}
-                      className={`text-left font-thin text-sm transition-colors hover:text-white ${
-                        activeIndex === index ? 'text-white' : 'text-white/50'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </nav>
-              )}
             </div>
           </div>
         </div>
@@ -818,7 +882,7 @@ export function ProjectDetailView({
         }}
       >
         <div className="rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-4 pt-0 pb-7 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
-          <div className="pt-8 pb-2">
+          <div className="pt-6 pb-2">
             <div className="flex items-center justify-between gap-3">
               <Link
                 href={projectsHref}
@@ -856,21 +920,23 @@ export function ProjectDetailView({
                 </div>
               )}
             </div>
-            <div className="mt-2 border-t border-white/15" aria-hidden />
-            <p className="mt-2 text-white/90 font-thin text-sm leading-relaxed truncate">{project.title}</p>
-            {project.collaboration?.url && project.collaboration.title && (
-              <p className="mt-[2px] text-sm leading-relaxed text-white/75 font-thin">
-                {copy.collaborationWith}{' '}
-                <a
-                  href={project.collaboration.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
-                >
-                  {project.collaboration.title}
-                </a>
-              </p>
-            )}
+            <div className="mt-3 border-t border-white/15" aria-hidden />
+            <div className="mt-3 inline-flex max-w-full items-center gap-4">
+              <p className="max-w-[55vw] text-white/90 font-thin text-sm leading-relaxed truncate">{project.title}</p>
+              {project.collaboration?.url && project.collaboration.title && (
+                <p className="text-sm leading-relaxed text-white/75 font-thin whitespace-nowrap">
+                  {copy.collaborationWith}{' '}
+                  <a
+                    href={project.collaboration.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
+                  >
+                    {project.collaboration.title}
+                  </a>
+                </p>
+              )}
+            </div>
           </div>
           <div className="pt-2">
             <div className="min-w-0">
