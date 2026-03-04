@@ -168,13 +168,28 @@ export function Scene3D() {
       document.addEventListener('visibilitychange', onVisibilityChange)
 
       // Обработка изменения размера
-      const onWindowResize = () => {
+      let resizeRafId: number | null = null
+      const syncRendererSize = () => {
         const newWidth = container.clientWidth
         const newHeight = container.clientHeight
         if (!newWidth || !newHeight) return
         camera.aspect = newWidth / newHeight
         camera.updateProjectionMatrix()
         renderer.setSize(newWidth, newHeight)
+      }
+
+      const onWindowResize = () => {
+        if (resizeRafId !== null) return
+        resizeRafId = requestAnimationFrame(() => {
+          resizeRafId = null
+          syncRendererSize()
+        })
+      }
+
+      const cancelResizeRaf = () => {
+        if (resizeRafId === null) return
+        cancelAnimationFrame(resizeRafId)
+        resizeRafId = null
       }
 
       window.addEventListener('resize', onWindowResize)
@@ -189,6 +204,7 @@ export function Scene3D() {
           cancelAnimationFrame(mouseFrameId)
           mouseFrameId = null
         }
+        cancelResizeRaf()
         window.removeEventListener('resize', onWindowResize)
         document.removeEventListener('visibilitychange', onVisibilityChange)
         cancelAnimationFrame(animationId)

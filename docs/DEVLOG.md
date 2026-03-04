@@ -250,3 +250,14 @@
     - `pkill -f "next build" || true`
     - `rm -f .next/lock`
   - это снижает риск падения деплоя с ошибкой `Unable to acquire lock at .next/lock`.
+
+### Микро-оптимизации клиентских компонентов (без изменения UX)
+- `components/ProjectCardImage.tsx`:
+  - компонент обёрнут в `memo` для снижения лишних перерисовок карточек;
+  - добавлен `useEffect` reset `loaded` при смене `imageUrl`, чтобы skeleton/state корректно переинициализировались.
+- `components/CustomCursor.tsx`:
+  - в `pointerover` добавлена защита от повторной установки `hovering` в то же значение (меньше лишних `ensureRender()` вызовов).
+- `components/Scene3D.tsx`:
+  - resize-обработчик переведён на rAF-throttle (аналогично mousemove), чтобы уменьшить нагрузку при сериях `resize`.
+- `components/ProjectDetailView.tsx`:
+  - локализованный `copy` мемоизирован по `locale` через `useMemo`, чтобы не пересоздавать объект на каждом рендере.

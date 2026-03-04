@@ -179,29 +179,33 @@ export function ProjectDetailView({
   locale = 'ru',
   projectsHref = '/projects',
 }: ProjectDetailViewProps) {
-  const copy = locale === 'en'
-    ? {
-        toProjects: 'To projects',
-        closeImage: 'Close',
-        zoomIn: 'Zoom in',
-        zoomOut: 'Zoom out',
-        resetZoom: 'Reset zoom',
-        prevScene: 'Previous scene',
-        nextScene: 'Next scene',
-        imageDialog: 'Image preview',
-        collaborationWith: 'In collaboration with',
-      }
-    : {
-        toProjects: 'К проектам',
-        closeImage: 'Закрыть',
-        zoomIn: 'Увеличить',
-        zoomOut: 'Уменьшить',
-        resetZoom: 'Сбросить масштаб',
-        prevScene: 'Предыдущая сцена',
-        nextScene: 'Следующая сцена',
-        imageDialog: 'Просмотр изображения',
-        collaborationWith: 'Совместно с',
-      }
+  const copy = useMemo(
+    () =>
+      locale === 'en'
+        ? {
+            toProjects: 'To projects',
+            closeImage: 'Close',
+            zoomIn: 'Zoom in',
+            zoomOut: 'Zoom out',
+            resetZoom: 'Reset zoom',
+            prevScene: 'Previous scene',
+            nextScene: 'Next scene',
+            imageDialog: 'Image preview',
+            collaborationWith: 'In collaboration with',
+          }
+        : {
+            toProjects: 'К проектам',
+            closeImage: 'Закрыть',
+            zoomIn: 'Увеличить',
+            zoomOut: 'Уменьшить',
+            resetZoom: 'Сбросить масштаб',
+            prevScene: 'Предыдущая сцена',
+            nextScene: 'Следующая сцена',
+            imageDialog: 'Просмотр изображения',
+            collaborationWith: 'Совместно с',
+          },
+    [locale]
+  )
 
   const leftRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([])

@@ -94,7 +94,9 @@ export function CustomCursor() {
 
     const onPointerOver = (event: Event) => {
       const target = event.target as HTMLElement | null
-      state.hovering = Boolean(target?.closest(INTERACTIVE_SELECTOR))
+      const nextHovering = Boolean(target?.closest(INTERACTIVE_SELECTOR))
+      if (nextHovering === state.hovering) return
+      state.hovering = nextHovering
       ensureRender()
     }
 

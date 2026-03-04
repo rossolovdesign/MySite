@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import Image from 'next/image'
 
 /** Картинка карточки проекта со скелетоном на время загрузки. */
-export function ProjectCardImage({
+export const ProjectCardImage = memo(function ProjectCardImage({
   imageUrl,
   alt,
   priority = false,
@@ -14,6 +14,10 @@ export function ProjectCardImage({
   priority?: boolean
 }) {
   const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    setLoaded(false)
+  }, [imageUrl])
 
   if (!imageUrl) {
     return (
@@ -38,4 +42,6 @@ export function ProjectCardImage({
       />
     </>
   )
-}
+})
+
+ProjectCardImage.displayName = 'ProjectCardImage'
