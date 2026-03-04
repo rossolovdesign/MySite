@@ -22,8 +22,8 @@ export default async function ProjectsPageEn() {
   const projects = await getProjectsByLocale('en')
 
   return (
-    <main className="w-screen min-h-screen relative overflow-x-hidden">
-      <div className="relative z-10 w-full flex flex-col min-h-screen overflow-hidden">
+    <main className="w-screen h-screen relative overflow-x-hidden overflow-y-auto scrollbar-hide">
+      <div className="relative z-10 w-full flex flex-col min-h-full">
         <div className="pt-8 px-8 flex-shrink-0">
           <div className="max-w-7xl mx-auto">
             <Link href="/en" className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors font-thin text-xl">
@@ -35,7 +35,7 @@ export default async function ProjectsPageEn() {
           </div>
         </div>
 
-        <div className="flex-1 w-full overflow-hidden">
+        <div className="flex-1 w-full">
           <div className="w-full px-6 md:px-8 py-6 md:py-16">
             <div className="max-w-7xl mx-auto">
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">

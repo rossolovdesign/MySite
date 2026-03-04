@@ -123,14 +123,14 @@ export default function HomeEn() {
         </span>
       </div>
 
-      <div className="md:hidden absolute inset-0 flex flex-col items-center justify-center px-6 py-8 z-20 pt-24 space-y-5 pb-40">
-        <div className="w-full -mx-6 px-7 shrink-0">
-          <h1 className="text-center font-semibold text-white tracking-[0.15em] sm:tracking-[0.2em] whitespace-nowrap w-full" style={{ fontSize: 'clamp(16px, 5vw, 2.25rem)' }}>
+      <div className="md:hidden absolute inset-0 flex flex-col items-center justify-start px-6 py-6 z-20 pt-14 gap-4 pb-34">
+        <div className="w-full shrink-0">
+          <h1 className="text-center font-semibold text-white tracking-[0.2em] whitespace-nowrap w-full leading-none" style={{ fontSize: 'clamp(22px, 8vw, 40px)' }}>
             IVAN ROSSOLOV
           </h1>
         </div>
 
-        <div className="w-full h-80 rounded-lg overflow-hidden shrink-0">
+        <div className="w-full h-[clamp(170px,30vh,320px)] rounded-lg overflow-hidden shrink-0">
           <Scene3D />
         </div>
 

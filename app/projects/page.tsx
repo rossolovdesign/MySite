@@ -33,9 +33,9 @@ export default async function ProjectsPage() {
   const projects = await getProjectsByLocale('ru')
 
   return (
-    <main className="w-screen min-h-screen relative overflow-x-hidden">
+    <main className="w-screen h-screen relative overflow-x-hidden overflow-y-auto scrollbar-hide">
       {/* Content */}
-      <div className="relative z-10 w-full flex flex-col min-h-screen overflow-hidden">
+      <div className="relative z-10 w-full flex flex-col min-h-full">
         {/* Header with Back Button */}
         <div className="pt-8 px-8 flex-shrink-0">
           <div className="max-w-7xl mx-auto">
@@ -52,7 +52,7 @@ export default async function ProjectsPage() {
         </div>
 
         {/* Projects Grid */}
-        <div className="flex-1 w-full overflow-hidden">
+        <div className="flex-1 w-full">
           <div className="w-full px-6 md:px-8 py-6 md:py-16">
             <div className="max-w-7xl mx-auto">
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
