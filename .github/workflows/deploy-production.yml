@@ -24,9 +24,11 @@ jobs:
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
           port: 22
+          debug: true
+          command_timeout: 40m
           script_stop: true
           script: |
-            set -e
+            set -xeuo pipefail
             cd /var/www/portfolio
             TARGET_SHA="${{ github.sha }}"
             echo "Target SHA: $TARGET_SHA"
