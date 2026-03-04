@@ -44,11 +44,10 @@ jobs:
             git fetch --prune origin main
             git checkout main
             git reset --hard "$TARGET_SHA"
-            git clean -fd
+            git clean -fd -e '.env*'
             echo "After reset SHA: $(git rev-parse --short HEAD)"
 
             pkill -f "next build" || true
-            rm -rf .next
             pnpm install --no-frozen-lockfile
             export NODE_OPTIONS=--max-old-space-size=2048
             printf "%s" "$TARGET_SHA" > public/deploy-sha.txt
