@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: production-deploy
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -30,11 +30,16 @@ jobs:
             cd /var/www/portfolio
             TARGET_SHA="${{ github.sha }}"
             echo "Target SHA: $TARGET_SHA"
+            echo "HOSTNAME: $(hostname)"
+            echo "WHOAMI: $(whoami)"
+            echo "PWD: $(pwd)"
+            echo "Before deploy SHA: $(git rev-parse --short HEAD)"
 
-            git fetch origin main
+            git fetch --prune origin main
             git checkout main
             git reset --hard "$TARGET_SHA"
             git clean -fd
+            echo "After reset SHA: $(git rev-parse --short HEAD)"
 
             pkill -f "next build" || true
             rm -f .next/lock
