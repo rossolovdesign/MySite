@@ -31,9 +31,10 @@ jobs:
 
             git fetch origin main
             git checkout main
-            git pull --ff-only origin main
+            git reset --hard origin/main
+            git clean -fd
 
-            pnpm install --frozen-lockfile
+            pnpm install --no-frozen-lockfile
             export NODE_OPTIONS=--max-old-space-size=2048
             pnpm build --webpack
             test -f .next/BUILD_ID
@@ -45,3 +46,4 @@ jobs:
             fi
 
             pm2 save
+            curl -fsS http://127.0.0.1:3000 >/dev/null
