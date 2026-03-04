@@ -12,7 +12,7 @@ const siteUrl = getSiteUrl()
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: 'Иван Россолов — Портфолио',
-  title: 'Иван Россолов — Продуктовый Дизайнер',
+  title: 'Ваня Россолов — продуктовый дизайнер',
   description: 'Портфолио продуктового дизайнера: проекты, кейсы, UX/UI решения и визуальные концепции.',
   generator: 'v0.app',
   alternates: {
@@ -27,12 +27,12 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     url: '/',
     siteName: 'Иван Россолов — Портфолио',
-    title: 'Иван Россолов — Продуктовый Дизайнер',
+    title: 'Ваня Россолов — продуктовый дизайнер',
     description: 'Портфолио продуктового дизайнера: проекты, кейсы, UX/UI решения и визуальные концепции.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Иван Россолов — Продуктовый Дизайнер',
+    title: 'Ваня Россолов — продуктовый дизайнер',
     description: 'Портфолио продуктового дизайнера: проекты, кейсы, UX/UI решения и визуальные концепции.',
   },
   icons: {
