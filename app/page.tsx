@@ -150,13 +150,13 @@ export default function Home() {
       {/* Mobile Layout — сгруппированный текст, плотнее межблочные отступы */}
       <div
         className="md:hidden absolute inset-0 flex flex-col items-center justify-start px-6 py-6 z-20 pt-14 gap-4 overflow-y-auto scrollbar-hide"
-        style={{ paddingBottom: 'max(144px, calc(112px + env(safe-area-inset-bottom)))' }}
+        style={{ paddingBottom: 'max(184px, calc(136px + env(safe-area-inset-bottom)))' }}
       >
         <div className="w-full shrink-0">
           <h1 className="text-center font-semibold text-white tracking-[0.2em] whitespace-nowrap w-full leading-none" style={{ fontSize: 'clamp(22px, 8vw, 40px)' }}>ВАНЯ РОССОЛОВ</h1>
         </div>
 
-        <div className="w-full h-[clamp(170px,30vh,320px)] rounded-lg overflow-hidden shrink-0">
+        <div className="w-full h-[clamp(140px,26vh,320px)] rounded-lg overflow-hidden shrink-0">
           <Scene3D />
         </div>
 
@@ -206,7 +206,7 @@ export default function Home() {
       {/* Mobile Projects Button - Fixed to bottom */}
       <Link
         href="/projects"
-        className="md:hidden fixed bottom-7 left-7 right-7 z-30 px-6 py-4 rounded-2xl border border-[rgba(240,241,241,0.18)] cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[rgba(0,161,255,0.2)] hover:bg-[#affc41] hover:border-[#affc41] hover:text-[#00060a] hover:scale-110 overflow-hidden"
+        className="md:hidden fixed bottom-7 left-7 right-7 max-[740px]:bottom-4 max-[740px]:left-5 max-[740px]:right-5 z-30 px-6 max-[740px]:px-5 py-4 max-[740px]:py-3 rounded-2xl border border-[rgba(240,241,241,0.18)] cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[rgba(0,161,255,0.2)] hover:bg-[#affc41] hover:border-[#affc41] hover:text-[#00060a] hover:scale-110 overflow-hidden"
         style={{
           backdropFilter: 'blur(3px) saturate(128%)',
           WebkitBackdropFilter: 'blur(3px) saturate(128%)',
@@ -216,7 +216,7 @@ export default function Home() {
         }}
       >
         <span className="absolute inset-0 pointer-events-none bg-[radial-gradient(140%_115%_at_50%_-22%,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.06)_22%,rgba(255,255,255,0.028)_46%,rgba(255,255,255,0.009)_68%,rgba(255,255,255,0)_88%)]" />
-        <span className="font-thin text-white/70 text-lg group-hover:text-[#00060a] relative z-10">Проекты</span>
+        <span className="font-thin text-white/70 text-lg max-[740px]:text-base group-hover:text-[#00060a] relative z-10">Проекты</span>
         <div className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-full border border-[rgba(240,241,241,0.3)] group-hover:border-[#00060a] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 relative z-10">
           <svg
             className="w-4 h-4 text-[#f0f1f1] group-hover:text-[#00060a]"
