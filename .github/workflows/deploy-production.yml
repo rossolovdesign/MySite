@@ -44,18 +44,15 @@ jobs:
             echo "After reset SHA: $(git rev-parse --short HEAD)"
 
             pkill -f "next build" || true
-            rm -f .next/lock
+            rm -rf .next
             pnpm install --no-frozen-lockfile
             export NODE_OPTIONS=--max-old-space-size=2048
             printf "%s" "$TARGET_SHA" > public/deploy-sha.txt
             pnpm build --webpack
             test -f .next/BUILD_ID
 
-            if pm2 describe portfolio >/dev/null 2>&1; then
-              pm2 restart portfolio --update-env
-            else
-              pm2 start "pnpm start -p 3000" --name portfolio
-            fi
+            pm2 delete portfolio || true
+            pm2 start "pnpm start -p 3000" --name portfolio --cwd /var/www/portfolio
 
             pm2 save
             curl -fsS http://127.0.0.1:3000 >/dev/null
