@@ -25,13 +25,15 @@ jobs:
           key: ${{ secrets.PROD_SSH_KEY }}
           port: 22
           script_stop: true
+          envs: GITHUB_SHA
           script: |
             set -e
             cd /var/www/portfolio
+            TARGET_SHA="${GITHUB_SHA}"
 
             git fetch origin main
             git checkout main
-            git reset --hard origin/main
+            git reset --hard "$TARGET_SHA"
             git clean -fd
 
             pkill -f "next build" || true
@@ -49,3 +51,5 @@ jobs:
 
             pm2 save
             curl -fsS http://127.0.0.1:3000 >/dev/null
+            DEPLOYED_SHA="$(git rev-parse HEAD)"
+            test "$DEPLOYED_SHA" = "$TARGET_SHA"
