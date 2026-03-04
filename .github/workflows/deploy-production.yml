@@ -31,10 +31,14 @@ jobs:
             set -xeuo pipefail
             cd /var/www/portfolio
             TARGET_SHA="${{ github.sha }}"
+            EXPECTED_HOST_IP="${{ secrets.PROD_HOST }}"
             echo "Target SHA: $TARGET_SHA"
             echo "HOSTNAME: $(hostname)"
             echo "WHOAMI: $(whoami)"
             echo "PWD: $(pwd)"
+            CURRENT_PUBLIC_IP="$(curl -4 -fsS https://api.ipify.org)"
+            echo "Remote public IP: $CURRENT_PUBLIC_IP"
+            test "$CURRENT_PUBLIC_IP" = "$EXPECTED_HOST_IP"
             echo "Before deploy SHA: $(git rev-parse --short HEAD)"
 
             git fetch --prune origin main
