@@ -217,3 +217,36 @@
 - Оптимизация без изменения механики:
   - рендер курсора переведён в **on-demand rAF loop** (цикл активен только при необходимости, не крутится постоянно в idle).
   - это снижает фоновую нагрузку CPU/GPU без визуальных изменений.
+
+---
+
+## Update 2026-03-04 (stability + safe optimization pass)
+
+### Мобилка: главная и список проектов
+- `app/page.tsx`, `app/en/page.tsx`:
+  - мобильный hero переведён в `justify-start` с уменьшенным верхним отступом (`pt-14`);
+  - высота блока `Scene3D` сделана адаптивной: `h-[clamp(170px,30vh,320px)]`;
+  - заголовок приведён к безопасным горизонтальным отступам контейнера (без «уезда»).
+- `app/projects/page.tsx`, `app/en/projects/page.tsx`:
+  - возвращён вертикальный скролл на мобильных (`h-screen + overflow-y-auto`);
+  - видимый скроллбар скрыт через `scrollbar-hide` (скролл при этом сохранён).
+
+### Иконка сайта / favicon
+- Добавлен `app/icon.svg` (минималистичная синяя `R`).
+- `app/layout.tsx`: убраны ссылки на несуществующие `icon-*.png` и `apple-icon.png`; оставлен единый `icon: '/icon.svg'` для устранения лишних 404 и упрощения загрузки иконок.
+
+### SEO/URL нормализация
+- `lib/site.ts`:
+  - ужесточена нормализация `siteUrl` через `URL` parser;
+  - добавлен safe-fallback на `https://rossolovedesign.ru`;
+  - исправлена обработка «битых» значений вида `https//domain` (без `:`), чтобы metadata/OG/canonical не формировали некорректные URL.
+
+### Sitemap
+- `app/sitemap.ts`: генерация RU/EN project routes объединена в один проход по массиву проектов (без двойного `filter().map()`), без изменения результата.
+
+### Автодеплой (надежность)
+- `.github/workflows/deploy-production.yml`:
+  - перед сборкой добавлена очистка возможного зависшего `next build` lock:
+    - `pkill -f "next build" || true`
+    - `rm -f .next/lock`
+  - это снижает риск падения деплоя с ошибкой `Unable to acquire lock at .next/lock`.

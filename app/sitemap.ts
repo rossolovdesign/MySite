@@ -34,23 +34,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  const projectRoutes = projects
-    .filter((project) => Boolean(project.slug?.current))
-    .map((project) => ({
-      url: `${siteUrl}/projects/${project.slug.current}`,
-      lastModified: project.date ? new Date(project.date) : now,
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    }))
+  const projectRoutes: MetadataRoute.Sitemap = []
+  const projectRoutesEn: MetadataRoute.Sitemap = []
 
-  const projectRoutesEn = projects
-    .filter((project) => Boolean(project.slug?.current))
-    .map((project) => ({
-      url: `${siteUrl}/en/projects/${project.slug.current}`,
-      lastModified: project.date ? new Date(project.date) : now,
-      changeFrequency: 'monthly' as const,
+  projects.forEach((project) => {
+    const slug = project.slug?.current
+    if (!slug) return
+
+    const lastModified = project.date ? new Date(project.date) : now
+    projectRoutes.push({
+      url: `${siteUrl}/projects/${slug}`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    })
+    projectRoutesEn.push({
+      url: `${siteUrl}/en/projects/${slug}`,
+      lastModified,
+      changeFrequency: 'monthly',
       priority: 0.7,
-    }))
+    })
+  })
 
   return [...routes, ...projectRoutes, ...projectRoutesEn]
 }
