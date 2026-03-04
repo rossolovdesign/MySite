@@ -67,17 +67,19 @@ jobs:
             test "$DEPLOYED_SHA" = "$TARGET_SHA"
 
       - name: Verify public production SHA
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
         run: |
           set -euo pipefail
           TARGET_SHA="${{ github.sha }}"
           for i in {1..10}; do
-            PUBLIC_SHA="$(curl -fsS https://rossolovedesign.ru/deploy-sha.txt | tr -d '\r\n' || true)"
-            echo "Public SHA (attempt $i): ${PUBLIC_SHA:-<empty>}"
+            PUBLIC_SHA="$(curl -fsS --resolve "rossolovedesign.ru:443:${PROD_HOST}" https://rossolovedesign.ru/deploy-sha.txt | tr -d '\r\n' || true)"
+            echo "Resolved-host SHA (attempt $i): ${PUBLIC_SHA:-<empty>}"
             if [ "$PUBLIC_SHA" = "$TARGET_SHA" ]; then
-              echo "Public production is on target SHA."
+              echo "Resolved host is on target SHA."
               exit 0
             fi
             sleep 3
           done
-          echo "Public production SHA does not match target SHA: $TARGET_SHA"
+          echo "Resolved-host production SHA does not match target SHA: $TARGET_SHA"
           exit 1
