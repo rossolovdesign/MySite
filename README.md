@@ -117,19 +117,29 @@ Edit `app/globals.css` and `app/page.tsx` to customize the design. The portfolio
 
 ## Deployment
 
-### Deploy to Vercel
+### Auto-deploy to VPS (GitHub Actions)
 
 ```bash
 git add .
-git commit -m "Initial portfolio setup"
+git commit -m "Setup production auto-deploy"
 git push origin main
 ```
 
-Then:
-1. Go to [vercel.com](https://vercel.com)
-2. Import your GitHub repository
-3. Add environment variables in project settings
-4. Deploy
+Then configure GitHub repository secrets:
+
+- `PROD_HOST` - server IP or domain (example: `82.146.40.70`)
+- `PROD_USER` - SSH user (example: `root`)
+- `PROD_SSH_KEY` - private SSH key content used for deploy access
+
+Workflow file: `.github/workflows/deploy-production.yml`
+
+What it does on every push to `main`:
+1. Connects to VPS via SSH
+2. Pulls latest `main` in `/var/www/portfolio`
+3. Runs `pnpm install --frozen-lockfile`
+4. Builds with `NODE_OPTIONS=--max-old-space-size=2048`
+5. Verifies `.next/BUILD_ID` exists
+6. Restarts `pm2` process `portfolio`
 
 ## Technologies Used
 
