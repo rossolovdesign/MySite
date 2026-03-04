@@ -1,11 +1,19 @@
 import type { Metadata } from 'next'
-import { Geologica } from 'next/font/google'
+import localFont from 'next/font/local'
 import { SiteBackground } from '@/components/SiteBackground'
 import { CustomCursor } from '@/components/CustomCursor'
 import { getSiteUrl } from '@/lib/site'
 import './globals.css'
 
-const geologica = Geologica({ subsets: ['latin', 'cyrillic'] })
+const geologica = localFont({
+  src: [
+    { path: '../public/fonts/geologica-latin.woff2', weight: '100 900', style: 'normal' },
+    { path: '../public/fonts/geologica-cyrillic.woff2', weight: '100 900', style: 'normal' },
+    { path: '../public/fonts/geologica-cyrillic-ext.woff2', weight: '100 900', style: 'normal' },
+  ],
+  display: 'swap',
+  variable: '--font-geologica',
+})
 
 const siteUrl = getSiteUrl()
 
@@ -47,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${geologica.className} antialiased`}>
+      <body className={`${geologica.variable} font-sans antialiased`}>
         <SiteBackground />
         <CustomCursor />
         <div className="relative z-10">{children}</div>
