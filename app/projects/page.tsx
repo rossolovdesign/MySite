@@ -73,7 +73,7 @@ export default async function ProjectsPage() {
                         key={project._id}
                         href={`/projects/${project.slug.current}`}
                         prefetch={false}
-                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04]"
+                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[20px] overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04]"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         {/* 1. Картинка */}
@@ -94,7 +94,7 @@ export default async function ProjectsPage() {
                             </p>
                           )}
                           {project.tags && project.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-2 mb-2">
                               {project.tags.map((tag) => (
                                 <span
                                   key={tag}

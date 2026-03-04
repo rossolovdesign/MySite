@@ -20,6 +20,9 @@ const SECTION_PEEK_PX = 32
 const SECTION_HEIGHT_CSS = `calc(100% - ${2 * (SECTION_GAP_PX + SECTION_PEEK_PX)}px)`
 const SECTION_HEIGHT_VH_CSS = `calc(100vh - ${2 * (SECTION_GAP_PX + SECTION_PEEK_PX)}px)`
 const MOBILE_SCROLL_MARGIN_TOP_CSS = 'calc(80px + env(safe-area-inset-top))'
+const MOBILE_SAFE_PAD_X_LEFT = 'max(16px, env(safe-area-inset-left))'
+const MOBILE_SAFE_PAD_X_RIGHT = 'max(16px, env(safe-area-inset-right))'
+const MOBILE_SAFE_PAD_BOTTOM = 'max(14px, env(safe-area-inset-bottom))'
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
@@ -142,6 +145,7 @@ export function ProjectDetailView({
         prevScene: 'Previous scene',
         nextScene: 'Next scene',
         imageDialog: 'Image preview',
+        collaborationWith: 'In collaboration with',
       }
     : {
         toProjects: 'К проектам',
@@ -152,6 +156,7 @@ export function ProjectDetailView({
         prevScene: 'Предыдущая сцена',
         nextScene: 'Следующая сцена',
         imageDialog: 'Просмотр изображения',
+        collaborationWith: 'Совместно с',
       }
 
   const leftRef = useRef<HTMLDivElement>(null)
@@ -523,8 +528,13 @@ export function ProjectDetailView({
                           scrollMarginTop: MOBILE_SCROLL_MARGIN_TOP_CSS,
                         }}
                         onClick={() => {
-                          if (!isDesktopLayout) return
-                          goToSection(i)
+                          if (isDesktopLayout) {
+                            goToSection(i)
+                            return
+                          }
+                          if (!isActive) {
+                            goToSection(i)
+                          }
                         }}
                       >
                         <CoverImageBox
@@ -534,7 +544,7 @@ export function ProjectDetailView({
                           defaultAspectRatio={4 / 3}
                           maxHeight={SECTION_HEIGHT_VH_CSS}
                           dimmed={!isActive}
-                          onOpenImage={!isDesktopLayout ? handleOpenSceneImage : undefined}
+                          onOpenImage={!isDesktopLayout && isActive ? handleOpenSceneImage : undefined}
                         />
                       </section>
                     )
@@ -545,17 +555,31 @@ export function ProjectDetailView({
 
             {/* Right: фиксированный блок + переключатель по заголовкам внизу */}
             <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(1.5rem,env(safe-area-inset-top))] pl-8 pr-8 pb-8 overflow-hidden">
-              <div className="rounded-2xl border border-white/10 bg-black/25 backdrop-blur-md px-5 py-4 mb-0">
+              <div className="rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-5 pt-6 pb-5 mb-0 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
                 <Link
                   href={projectsHref}
-                  className="inline-flex items-center gap-1 text-white/60 hover:text-white transition-colors font-thin text-xl"
+                  className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-thin text-lg"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                   {copy.toProjects}
                 </Link>
-                <h1 className="text-white font-thin text-lg leading-relaxed mt-2">{project.title}</h1>
+                <div className="mt-2 border-t border-white/15" aria-hidden />
+                <h1 className="text-white/95 font-thin text-xl leading-snug mt-2">{project.title}</h1>
+                {project.collaboration?.url && project.collaboration.title && (
+                  <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-thin">
+                    {copy.collaborationWith}{' '}
+                    <a
+                      href={project.collaboration.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 hover:text-white transition-colors"
+                    >
+                      {project.collaboration.title}
+                    </a>
+                  </p>
+                )}
               </div>
 
               <div className="mt-8 flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
@@ -661,9 +685,16 @@ export function ProjectDetailView({
             </button>
           </div>
 
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+          <div
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] pt-3 bg-gradient-to-t from-[#00060a]/95 via-[#00060a]/65 to-transparent"
+            style={{
+              paddingLeft: MOBILE_SAFE_PAD_X_LEFT,
+              paddingRight: MOBILE_SAFE_PAD_X_RIGHT,
+              paddingBottom: MOBILE_SAFE_PAD_BOTTOM,
+            }}
+          >
             <div
-              className="mx-auto max-w-md rounded-full border border-white/20 bg-black/80 backdrop-blur-md p-3"
+              className="mx-auto max-w-md rounded-full border border-[#00a1ff]/35 bg-[rgba(0,162,255,0.20)] backdrop-blur-xl p-3 shadow-[0_8px_30px_rgba(0,20,35,0.45)]"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-center justify-between gap-2">
@@ -674,7 +705,7 @@ export function ProjectDetailView({
                       event.stopPropagation()
                       zoomOut()
                     }}
-                    className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg"
+                    className="h-10 w-10 rounded-full border border-[#00a1ff]/45 text-white/90 bg-[#00060a]/70 shadow-[0_6px_18px_rgba(0,6,10,0.5)]"
                     aria-label={copy.zoomOut}
                   >
                     -
@@ -683,20 +714,9 @@ export function ProjectDetailView({
                     type="button"
                     onClick={(event) => {
                       event.stopPropagation()
-                      setLightboxZoom(1)
-                    }}
-                    className="h-10 px-3 rounded-full border border-white/60 text-white bg-black/75 shadow-lg text-sm"
-                    aria-label={copy.resetZoom}
-                  >
-                    {Math.round(lightboxZoom * 100)}%
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
                       zoomIn()
                     }}
-                    className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg"
+                    className="h-10 w-10 rounded-full border border-[#00a1ff]/45 text-white/90 bg-[#00060a]/70 shadow-[0_6px_18px_rgba(0,6,10,0.5)]"
                     aria-label={copy.zoomIn}
                   >
                     +
@@ -708,7 +728,7 @@ export function ProjectDetailView({
                     event.stopPropagation()
                     closeLightbox()
                   }}
-                  className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg"
+                  className="h-10 w-10 rounded-full border border-[#00a1ff]/45 text-white/90 bg-[#00060a]/70 shadow-[0_6px_18px_rgba(0,6,10,0.5)]"
                   aria-label={copy.closeImage}
                 >
                   ✕
@@ -718,7 +738,13 @@ export function ProjectDetailView({
           </div>
 
           <div
-            className="h-full w-full overflow-auto p-4 md:p-8"
+            className="h-full w-full overflow-auto md:p-8"
+            style={{
+              paddingTop: 'max(16px, env(safe-area-inset-top))',
+              paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+              paddingLeft: MOBILE_SAFE_PAD_X_LEFT,
+              paddingRight: MOBILE_SAFE_PAD_X_RIGHT,
+            }}
             onClick={(event) => event.stopPropagation()}
             onWheel={(event) => {
               if (!event.ctrlKey && Math.abs(event.deltaY) < 1) return
@@ -783,61 +809,78 @@ export function ProjectDetailView({
       )}
 
       {/* Mobile: bottom project card */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-8 bg-gradient-to-t from-black/90 via-black/55 to-transparent">
-        <div className="rounded-2xl border border-white/10 bg-black/35 backdrop-blur-md px-4 pt-3 pb-6">
-          <div className="flex items-center justify-between gap-3 pb-8 border-b border-white/10">
-            <Link
-              href={projectsHref}
-              className="inline-flex items-center gap-1 text-white/70 active:text-white transition-colors font-thin text-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              {copy.toProjects}
-            </Link>
-            <p className="text-white/90 font-thin text-sm truncate text-right">{project.title}</p>
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-white font-thin text-base truncate">
-                {activeScene ? activeScene.title : project.title}
-              </p>
-              {preparedScenes.length > 0 && (
-                <p className="text-white/50 font-thin text-xs mt-1">
-                  {activeIndex + 1} / {preparedScenes.length}
-                </p>
+      <div
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-20 pt-8 bg-gradient-to-t from-[#00060a]/95 via-[#001f33]/58 to-transparent"
+        style={{
+          paddingLeft: MOBILE_SAFE_PAD_X_LEFT,
+          paddingRight: MOBILE_SAFE_PAD_X_RIGHT,
+          paddingBottom: MOBILE_SAFE_PAD_BOTTOM,
+        }}
+      >
+        <div className="rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-4 pt-0 pb-7 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
+          <div className="pt-8 pb-2">
+            <div className="flex items-center justify-between gap-3">
+              <Link
+                href={projectsHref}
+                className="inline-flex h-9 items-center gap-1 text-white/80 active:text-[#affc41] transition-colors font-thin text-sm"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                {copy.toProjects}
+              </Link>
+              {preparedScenes.length > 1 && (
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
+                    disabled={!hasPrevScene}
+                    className="h-9 w-9 rounded-full border border-[#affc41]/40 text-[#affc41] bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                    aria-label={copy.prevScene}
+                  >
+                    <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
+                    disabled={!hasNextScene}
+                    className="h-9 w-9 rounded-full border border-[#affc41]/40 text-[#affc41] bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                    aria-label={copy.nextScene}
+                  >
+                    <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               )}
             </div>
-
-            {preparedScenes.length > 1 && (
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
-                  disabled={!hasPrevScene}
-                  className="h-9 w-9 rounded-full border border-white/20 text-white/85 disabled:opacity-35 disabled:cursor-not-allowed"
-                  aria-label={copy.prevScene}
+            <div className="mt-2 border-t border-white/15" aria-hidden />
+            <p className="mt-2 text-white/90 font-thin text-sm leading-relaxed truncate">{project.title}</p>
+            {project.collaboration?.url && project.collaboration.title && (
+              <p className="mt-[2px] text-sm leading-relaxed text-white/75 font-thin">
+                {copy.collaborationWith}{' '}
+                <a
+                  href={project.collaboration.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
                 >
-                  <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
-                  disabled={!hasNextScene}
-                  className="h-9 w-9 rounded-full border border-white/20 text-white/85 disabled:opacity-35 disabled:cursor-not-allowed"
-                  aria-label={copy.nextScene}
-                >
-                  <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
+                  {project.collaboration.title}
+                </a>
+              </p>
             )}
           </div>
+          <div className="pt-2">
+            <div className="min-w-0">
+              <p className="text-white font-thin text-lg leading-snug">
+                {activeScene ? activeScene.title : project.title}
+              </p>
+            </div>
+          </div>
           {activeScene?.description && (
-            <p className="text-white/70 font-thin text-sm line-clamp-2 mt-2">
+            <p className="text-white/75 font-thin text-sm leading-relaxed mt-[2px]">
               {activeScene.description}
             </p>
           )}

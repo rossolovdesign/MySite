@@ -37,6 +37,10 @@ export interface Project {
       metadata?: { dimensions?: { width: number; height: number } }
     }
   }
+  collaboration?: {
+    url: string
+    title: string
+  }
   scenes?: Scene[]
 }
 
@@ -55,6 +59,10 @@ export async function getProjects(): Promise<Project[]> {
           url,
           metadata { dimensions { width, height } }
         }
+      },
+      "collaboration": collaboration {
+        "url": url,
+        "title": coalesce(titleRu, titleEn)
       }
     }`
     
@@ -84,6 +92,10 @@ export async function getProjectsByLocale(locale: Locale = 'ru'): Promise<Projec
           url,
           metadata { dimensions { width, height } }
         }
+      },
+      "collaboration": collaboration {
+        "url": url,
+        "title": ${locale === 'en' ? 'coalesce(titleEn, titleRu)' : 'coalesce(titleRu, titleEn)'}
       }
     }`
 
@@ -109,6 +121,10 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
           url,
           metadata { dimensions { width, height } }
         }
+      },
+      "collaboration": collaboration {
+        "url": url,
+        "title": coalesce(titleRu, titleEn)
       },
       scenes[]-> {
         _id,
@@ -140,7 +156,6 @@ export async function getProjectBySlugAndLocale(slug: string, locale: Locale = '
     const tagsExpr = locale === 'en' ? 'coalesce(tagsEn, tags)' : 'tags'
     const sceneTitleExpr = locale === 'en' ? 'coalesce(titleEn, title)' : 'title'
     const sceneDescriptionExpr = locale === 'en' ? 'coalesce(descriptionEn, description)' : 'description'
-
     const query = `*[_type == "project" && slug.current == $slug][0] {
       _id,
       "title": ${titleExpr},
@@ -154,6 +169,10 @@ export async function getProjectBySlugAndLocale(slug: string, locale: Locale = '
           url,
           metadata { dimensions { width, height } }
         }
+      },
+      "collaboration": collaboration {
+        "url": url,
+        "title": ${locale === 'en' ? 'coalesce(titleEn, titleRu)' : 'coalesce(titleRu, titleEn)'}
       },
       scenes[]-> {
         _id,

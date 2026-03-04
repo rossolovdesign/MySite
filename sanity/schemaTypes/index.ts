@@ -76,6 +76,33 @@ export const projectType = defineType({
       },
     }),
     defineField({
+      name: 'collaboration',
+      title: 'Совместно с',
+      type: 'object',
+      description:
+        'Опциональный блок для карточки проекта: "Совместно с" + ссылка на партнера/студию.',
+      fields: [
+        defineField({
+          name: 'url',
+          title: 'URL',
+          type: 'url',
+          description: 'Ссылка на сайт/профиль партнера.',
+        }),
+        defineField({
+          name: 'titleRu',
+          title: 'Заголовок (RU)',
+          type: 'string',
+          description: 'Текст ссылки для русской версии.',
+        }),
+        defineField({
+          name: 'titleEn',
+          title: 'Заголовок (EN)',
+          type: 'string',
+          description: 'Текст ссылки для английской версии.',
+        }),
+      ],
+    }),
+    defineField({
       name: 'scenes',
       title: 'Scenes',
       type: 'array',

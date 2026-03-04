@@ -149,6 +149,55 @@
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
 
+/* Custom cursor */
+.custom-cursor-enabled,
+.custom-cursor-enabled * {
+  cursor: none !important;
+}
+
+.custom-cursor-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.custom-cursor-ring,
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  will-change: transform, opacity;
+}
+
+.custom-cursor-ring {
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 161, 255, 0.65);
+  background: rgba(0, 161, 255, 0.16);
+  box-shadow:
+    0 0 0 1px rgba(175, 252, 65, 0.2) inset,
+    0 8px 24px rgba(0, 32, 51, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+.custom-cursor-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #affc41;
+  box-shadow: 0 0 18px rgba(175, 252, 65, 0.75);
+}
+
+@media (any-pointer: coarse) and (any-hover: none) {
+  .custom-cursor-layer {
+    display: none;
+  }
+}
+
 @keyframes skeleton-shimmer {
   0% {
     background-position: 200% 0;

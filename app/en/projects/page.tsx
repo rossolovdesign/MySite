@@ -65,7 +65,7 @@ export default async function ProjectsPageEn() {
                             <p className="text-white/60 font-thin text-sm leading-snug line-clamp-2 flex-1">{project.shortDescription}</p>
                           )}
                           {project.tags && project.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-2 mb-2">
                               {project.tags.map((tag) => (
                                 <span key={tag} className="text-xs px-2.5 py-1 rounded-full border border-[#affc41]/40 text-[#affc41] font-thin whitespace-nowrap">
                                   {tag}

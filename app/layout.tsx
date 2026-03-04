@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geologica } from 'next/font/google'
 import { SiteBackground } from '@/components/SiteBackground'
+import { CustomCursor } from '@/components/CustomCursor'
 import { getSiteUrl } from '@/lib/site'
 import './globals.css'
 
@@ -62,6 +63,7 @@ export default function RootLayout({
     <html lang="ru">
       <body className={`${geologica.className} antialiased`}>
         <SiteBackground />
+        <CustomCursor />
         <div className="relative z-10">{children}</div>
       </body>
     </html>
