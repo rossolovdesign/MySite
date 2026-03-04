@@ -47,6 +47,7 @@ jobs:
             rm -f .next/lock
             pnpm install --no-frozen-lockfile
             export NODE_OPTIONS=--max-old-space-size=2048
+            printf "%s" "$TARGET_SHA" > public/.deploy-sha
             pnpm build --webpack
             test -f .next/BUILD_ID
 
@@ -58,6 +59,9 @@ jobs:
 
             pm2 save
             curl -fsS http://127.0.0.1:3000 >/dev/null
+            LOCAL_SHA="$(curl -fsS http://127.0.0.1:3000/.deploy-sha | tr -d '\r\n')"
+            echo "Local served SHA: $LOCAL_SHA"
+            test "$LOCAL_SHA" = "$TARGET_SHA"
             DEPLOYED_SHA="$(git rev-parse HEAD)"
             echo "Deployed SHA: $DEPLOYED_SHA"
             test "$DEPLOYED_SHA" = "$TARGET_SHA"
