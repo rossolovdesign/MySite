@@ -62,24 +62,9 @@ jobs:
             LOCAL_SHA="$(curl -fsS http://127.0.0.1:3000/deploy-sha.txt | tr -d '\r\n')"
             echo "Local served SHA: $LOCAL_SHA"
             test "$LOCAL_SHA" = "$TARGET_SHA"
+            NGINX_SHA="$(curl -fsS --resolve "rossolovedesign.ru:443:127.0.0.1" https://rossolovedesign.ru/deploy-sha.txt | tr -d '\r\n')"
+            echo "Nginx served SHA: $NGINX_SHA"
+            test "$NGINX_SHA" = "$TARGET_SHA"
             DEPLOYED_SHA="$(git rev-parse HEAD)"
             echo "Deployed SHA: $DEPLOYED_SHA"
             test "$DEPLOYED_SHA" = "$TARGET_SHA"
-
-      - name: Verify public production SHA
-        env:
-          PROD_HOST: ${{ secrets.PROD_HOST }}
-        run: |
-          set -euo pipefail
-          TARGET_SHA="${{ github.sha }}"
-          for i in {1..10}; do
-            PUBLIC_SHA="$(curl -fsS --resolve "rossolovedesign.ru:443:${PROD_HOST}" https://rossolovedesign.ru/deploy-sha.txt | tr -d '\r\n' || true)"
-            echo "Resolved-host SHA (attempt $i): ${PUBLIC_SHA:-<empty>}"
-            if [ "$PUBLIC_SHA" = "$TARGET_SHA" ]; then
-              echo "Resolved host is on target SHA."
-              exit 0
-            fi
-            sleep 3
-          done
-          echo "Resolved-host production SHA does not match target SHA: $TARGET_SHA"
-          exit 1
