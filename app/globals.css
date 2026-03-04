@@ -13,8 +13,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Geologica', 'Geologica Fallback';
-  --font-mono: 'Geologica', 'Geologica Fallback';
+  --font-sans: var(--font-geologica), 'Segoe UI', Roboto, 'Noto Sans', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 
 @layer base {
