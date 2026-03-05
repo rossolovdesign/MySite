@@ -168,16 +168,16 @@ export default function Home() {
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>Работаю с 2019 года</p>
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>30+ проектов</p>
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>5 крупных проектов</p>
+            <p className="font-thin text-white leading-tight text-base">Работаю с 2019 года</p>
+            <p className="font-thin text-white leading-tight text-base">30+ проектов</p>
+            <p className="font-thin text-white leading-tight text-base">5 крупных проектов</p>
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>
+            <p className="font-thin text-white leading-tight text-base">
               Здесь я собрал работы, которыми горжусь
             </p>
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>
+            <p className="font-thin text-white leading-tight text-base">
               Пообщаться со мной можно тут
             </p>
           </div>

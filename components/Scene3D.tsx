@@ -143,12 +143,18 @@ export function Scene3D() {
         window.addEventListener('mousemove', onMouseMove, { passive: true })
       }
 
+      // На touch-устройствах — авто-вращение по Y (голова не может следить за курсором)
+      const AUTO_ROTATE_SPEED = 0.012
+
       // Анимация
       const animate = () => {
         if (disposed || !isAnimating) return
         animationId = requestAnimationFrame(animate)
 
         if (model) {
+          if (!hasFinePointer) {
+            targetRotationY += AUTO_ROTATE_SPEED
+          }
           model.rotation.x += (targetRotationX - model.rotation.x) * 0.05
           model.rotation.y += (targetRotationY - model.rotation.y) * 0.05
         }

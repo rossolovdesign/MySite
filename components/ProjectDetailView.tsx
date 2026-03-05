@@ -17,7 +17,6 @@ const SECTION_PEEK_PX = 32
  * => высота активной секции: H - 2 * (gap + peek) = H - 128px
  */
 const SECTION_HEIGHT_VH_CSS = `calc(100vh - ${2 * (SECTION_GAP_PX + SECTION_PEEK_PX)}px)`
-const MOBILE_SCROLL_MARGIN_TOP_CSS = 'calc(80px + env(safe-area-inset-top))'
 const MOBILE_SAFE_PAD_X_LEFT = 'max(16px, env(safe-area-inset-left))'
 const MOBILE_SAFE_PAD_X_RIGHT = 'max(16px, env(safe-area-inset-right))'
 const MOBILE_SAFE_PAD_BOTTOM = 'max(14px, env(safe-area-inset-bottom))'
@@ -286,7 +285,7 @@ export function ProjectDetailView({
   }, [])
 
   useEffect(() => {
-    if (!isDesktopLayout) return
+    if (isDesktopLayout === false) return
     if (!sectionRefs.current.length || !leftRef.current) return
 
     const rootEl = leftRef.current
@@ -399,8 +398,8 @@ export function ProjectDetailView({
   const goToSection = useCallback((index: number) => {
     const safeIndex = Math.max(0, Math.min(index, preparedScenes.length - 1))
     setActiveIndex((prev) => (prev === safeIndex ? prev : safeIndex))
-    scrollToSection(safeIndex, 'smooth')
-  }, [scrollToSection, preparedScenes.length])
+    if (isDesktopLayout) scrollToSection(safeIndex, 'smooth')
+  }, [scrollToSection, preparedScenes.length, isDesktopLayout])
 
   const hasPrevScene = activeIndex > 0
   const hasNextScene = activeIndex < preparedScenes.length - 1
@@ -525,7 +524,7 @@ export function ProjectDetailView({
     }
   }, [isLightboxOpen])
 
-  // Мягкий доскралл: после паузы в ручном скролле аккуратно прилипает к ближайшей секции.
+  // Мягкий доскралл: после паузы в ручном скролле аккуратно прилипает к ближайшей секции. Только на десктопе.
   useEffect(() => {
     if (!isDesktopLayout) return
     const rootEl = leftRef.current
@@ -543,6 +542,7 @@ export function ProjectDetailView({
         const rect = sectionEl.getBoundingClientRect()
         const sectionCenter = rect.top + rect.height / 2
         const distance = Math.abs(sectionCenter - rootCenter)
+
         if (distance < nearestDistance) {
           nearestDistance = distance
           nearestIndex = index
@@ -585,15 +585,33 @@ export function ProjectDetailView({
       <div className="relative z-10 flex h-full">
         <div className="w-full">
           <div className="max-w-[1920px] mx-auto flex h-full">
-            {/* Left: scrollable images. Горизонтальные безопасные отступы. */}
+            {/* Left: images. Mobile — стопка (одна картинка), desktop — скролл. */}
             <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
               <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                {/* Mobile: одна картинка, переключение только стрелками. Карточка фиксирована на 40vh снизу. */}
+                <div
+                  className="lg:hidden flex-1 min-h-0 flex items-center justify-center overflow-hidden pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[calc(2rem+env(safe-area-inset-top))] pb-[40vh]"
+                >
+                  {activeScene && (
+                    <CoverImageBox
+                      mediaType={activeScene.sceneMediaType}
+                      imageUrl={activeScene.imageUrl}
+                      lottieFileUrl={activeScene.lottieFileUrl}
+                      alt={activeScene.title}
+                      precomputedAspectRatio={activeScene.imageUrl ? mediaAspectRatios[activeScene.imageUrl] ?? null : null}
+                      defaultAspectRatio={4 / 3}
+                      maxHeight={SECTION_HEIGHT_VH_CSS}
+                      dimmed={false}
+                      onOpenImage={handleOpenSceneImage}
+                    />
+                  )}
+                </div>
+
+                {/* Desktop: скролл с секциями */}
                 <div
                   ref={leftRef}
-                  className="scrollbar-hide flex-1 min-h-0 overflow-y-hidden lg:overflow-y-auto overflow-x-hidden pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[calc(72px+env(safe-area-inset-top))] pb-[calc(156px+env(safe-area-inset-bottom))] md:pl-[max(32px,env(safe-area-inset-left))] md:pr-[max(32px,env(safe-area-inset-right))] lg:pr-0 lg:pt-0 lg:pb-0"
-                  style={{}}
+                  className="hidden lg:block scrollbar-hide flex-1 min-h-0 overflow-y-auto overflow-x-hidden pl-[max(32px,env(safe-area-inset-left))] pr-0 pt-0 pb-0"
                 >
-                  {/* Секции: первая имеет безопасный отступ 32px сверху, между фото — 32px; при скролле видны выступы соседних кадров. */}
                   {preparedScenes.map((scene, i) => {
                     const isActive = activeIndex === i
                     const isFirst = i === 0
@@ -604,21 +622,12 @@ export function ProjectDetailView({
                         ref={(el) => {
                           sectionRefs.current[i] = el
                         }}
-                        className="relative w-full flex-shrink-0 flex items-center justify-center box-border min-h-0 h-auto"
+                        className="relative w-full flex-shrink-0 flex items-center justify-center box-border min-h-0 h-auto cursor-pointer"
                         style={{
                           marginTop: isFirst ? SECTION_GAP_PX : 0,
                           marginBottom: isLast ? SECTION_GAP_PX : SECTION_GAP_PX,
-                          scrollMarginTop: MOBILE_SCROLL_MARGIN_TOP_CSS,
                         }}
-                        onClick={() => {
-                          if (isDesktopLayout) {
-                            goToSection(i)
-                            return
-                          }
-                          if (!isActive) {
-                            goToSection(i)
-                          }
-                        }}
+                        onClick={() => goToSection(i)}
                       >
                         <CoverImageBox
                           mediaType={scene.sceneMediaType}
@@ -629,7 +638,7 @@ export function ProjectDetailView({
                           defaultAspectRatio={4 / 3}
                           maxHeight={SECTION_HEIGHT_VH_CSS}
                           dimmed={!isActive}
-                          onOpenImage={!isDesktopLayout && isActive ? handleOpenSceneImage : undefined}
+                          onOpenImage={undefined}
                         />
                       </section>
                     )
@@ -876,17 +885,10 @@ export function ProjectDetailView({
         </div>
       )}
 
-      {/* Mobile: bottom project card */}
-      <div
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-20 pt-8 bg-gradient-to-t from-[#00060a]/95 via-[#001f33]/58 to-transparent"
-        style={{
-          paddingLeft: MOBILE_SAFE_PAD_X_LEFT,
-          paddingRight: MOBILE_SAFE_PAD_X_RIGHT,
-          paddingBottom: MOBILE_SAFE_PAD_BOTTOM,
-        }}
-      >
-        <div className="rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-4 pt-0 pb-7 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
-          <div className="pt-6 pb-2">
+      {/* Mobile: фиксированная карточка на половину экрана, края в край экрана */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 h-[40vh] flex flex-col">
+        <div className="flex-1 min-h-0 rounded-t-[20px] border border-[#00a1ff]/30 border-b-0 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-4 pt-4 pb-0 shadow-[0_12px_36px_rgba(0,20,35,0.45)] overflow-y-auto scrollbar-hide flex flex-col items-stretch">
+          <div className="pb-2 flex-shrink-0">
             <div className="flex items-center justify-between gap-3">
               <Link
                 href={projectsHref}
@@ -910,6 +912,9 @@ export function ProjectDetailView({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
+                  <span className="min-w-[2.5rem] text-center text-sm font-thin text-white/70 tabular-nums">
+                    {activeIndex + 1} / {preparedScenes.length}
+                  </span>
                   <button
                     type="button"
                     onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}

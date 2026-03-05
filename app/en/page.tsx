@@ -145,14 +145,14 @@ export default function HomeEn() {
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>Designing since 2019</p>
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>30+ projects</p>
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>5 large-scale projects</p>
+            <p className="font-thin text-white leading-tight text-base">Designing since 2019</p>
+            <p className="font-thin text-white leading-tight text-base">30+ projects</p>
+            <p className="font-thin text-white leading-tight text-base">5 large-scale projects</p>
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>Here I share work I am proud of</p>
-            <p className="font-thin text-white leading-tight" style={{ fontSize: 'clamp(16px, 5vw, 20px)' }}>Reach out to me right here</p>
+            <p className="font-thin text-white leading-tight text-base">Here I share work I am proud of</p>
+            <p className="font-thin text-white leading-tight text-base">Reach out to me right here</p>
           </div>
 
           <div className="flex gap-2 justify-start flex-wrap pt-0.5">
