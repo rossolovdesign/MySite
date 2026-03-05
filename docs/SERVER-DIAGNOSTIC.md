@@ -6,6 +6,12 @@
 
 ## 0. Срочно: кто жрёт CPU (если 100% вернулось)
 
+**Одной командой (если SSH тормозит — выполнить по частям):**
+```bash
+ps aux --sort=-%cpu | head -10
+```
+
+**Полная диагностика:**
 ```bash
 echo "=== TOP CPU (5 процессов) ==="
 ps aux --sort=-%cpu | head -6
@@ -23,14 +29,30 @@ echo "=== ld.so.preload (rootkit) ==="
 cat /etc/ld.so.preload 2>/dev/null || echo "empty/not found"
 ```
 
-Если видишь процесс с высоким %CPU — запомни PID и путь. Если путь `/tmp/.16` или `/tmp/file*` — это майнер. Сразу: `pkill -9 -f "/tmp/.16"` и переходи к разделу 3.
+**Интерпретация:**
+| Процесс / путь | Действие |
+|----------------|----------|
+| `/tmp/.16`, `/tmp/file*`, `/var/tmp/snap`, `/var/tmp/snapd`, `/var/tmp/apt.log`, `/root/.X0-lock`, `/root/.bash_logout` (вредоносный) | **Майнер/дроппер.** Сразу: `pkill -9 -f "/tmp/.16"` → раздел 3 (очистка) |
+| `node`, `next`, `/var/www/portfolio` | **Приложение.** Возможен crash loop PM2 или высокая нагрузка. Проверить: `pm2 status`, `pm2 logs` |
+| `kworker`, `ksoftirqd` | Ядро Linux, обычно при I/O или сетевой нагрузке |
+| Неизвестный бинарник в `/tmp`, `/var/tmp`, `/dev/shm` | Подозрительно — проверить `file /путь` и `strings /путь \| head` |
+
+**Если это Node/Next.js (приложение):**
+```bash
+pm2 status
+pm2 logs portfolio --lines 30 --nostream
+```
+- Много рестартов (restart > 100) → crash loop. Проверить логи на `TypeError`, `middleware`, `proxy`. Убедиться, что `proxy.ts` в репо и в деплое.
+- Нормальные рестарты, но CPU 100% → возможна утечка или тяжёлый рендер. Временно: `pm2 stop portfolio` — если CPU падает, проблема в приложении.
 
 ---
 
 ## 1. Поиск persistence майнера
 
+**Важно:** майнер подменяет `crontab` в .bashrc — используй `cat /var/spool/cron/crontabs/root`, не `crontab -l`.
+
 ```bash
-echo "=== CRONTAB ==="
+echo "=== CRONTAB (реальный!) ==="
 cat /var/spool/cron/crontabs/root 2>/dev/null
 echo ""
 echo "=== /etc/cron.d/ ==="
@@ -51,8 +73,10 @@ echo ""
 echo "=== ROOT SHELL FILES ==="
 grep -l "tmp\|apt.log\|bash_logout\|\.16" /root/.bashrc /root/.profile /root/.bash_logout 2>/dev/null || echo "no matches"
 echo ""
-echo "=== /var/tmp and /tmp suspicious ==="
+echo "=== /var/tmp and /tmp suspicious (snap, snapd, .16) ==="
 ls -la /var/tmp/
+ls -la /var/tmp/snap /var/tmp/snapd 2>/dev/null || echo "snap/snapd not found"
+ls -la /root/.X0-lock 2>/dev/null || echo ".X0-lock not found"
 ls -la /tmp/ | grep -v "^\." | head -20
 echo ""
 echo "=== PARENT OF .16 (if running) ==="
@@ -116,7 +140,8 @@ cd /var/www/portfolio && git log -3 --oneline
 # Убить процессы
 pkill -9 -f "/tmp/.16"
 pkill -9 -f "for p in /proc"
-rm -f /tmp/.16 /tmp/file* /var/tmp/snap /var/tmp/apt.log
+rm -f /tmp/.16 /tmp/file* /var/tmp/snap /var/tmp/snapd /var/tmp/apt.log /root/.X0-lock
+rm -f /root/.bash_logout
 
 # Очистить ld.so.preload
 echo "" | tee /etc/ld.so.preload
@@ -133,6 +158,9 @@ cp /etc/skel/.bashrc /root/.bashrc
 # Если нужны свои настройки — отредактировать после
 
 cp /etc/skel/.bash_logout /root/.bash_logout 2>/dev/null
+
+# Защита от перезаписи (опционально): chattr +i /var/spool/cron/crontabs/root
+# Снять: chattr -i /var/spool/cron/crontabs/root
 
 # Проверить /etc/cron.d и cron.hourly
 rm -f /etc/cron.d/0 /etc/cron.hourly/0 2>/dev/null
@@ -193,6 +221,7 @@ for u in root $(ls /var/spool/cron/crontabs/ 2>/dev/null); do echo "--- $u ---";
 
 ## 5. Если майнер вернулся повторно
 
-- **Пересоздание VPS** — единственный надёжный вариант. Rootkit мог оставить backdoor; persistence может быть в systemd, init.d, других пользователях.
-- Смени все пароли и ключи после пересоздания.
+- **Пересоздание VPS** — самый надёжный вариант (rootkit мог оставить backdoor). Рекомендуется при первой возможности.
+- Пока остаёмся на текущем VPS: после каждой очистки периодически проверять `ps aux --sort=-%cpu | head -5` — при появлении `/tmp/.16` снова выполнить раздел 3.
+- Смени пароль root и SSH-ключи, обнови систему (`apt update && apt upgrade`).
 - Проверь, как произошло первоначальное заражение (слабый пароль SSH, уязвимость в веб-приложении, необновлённая система).

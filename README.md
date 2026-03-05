@@ -164,6 +164,12 @@ pm2 start portfolio
 pm2 save
 ```
 
+**При первом деплое:** если процесс `portfolio` ещё не создан в PM2, сначала выполните:
+```bash
+pm2 start "pnpm start -p 3000" --name portfolio --cwd /var/www/portfolio
+pm2 save
+```
+
 ## Technologies Used
 
 - **Next.js 16**: React framework with App Router
