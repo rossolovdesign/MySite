@@ -310,3 +310,19 @@
 - `docs/SERVER-DIAGNOSTIC.md`:
   - добавлен раздел 0: быстрая проверка top/ps + /tmp + ld.so.preload;
   - добавлен раздел 4: при повторном возврате — пересоздание VPS обязательно.
+
+---
+
+## Update 2026-03-05 (исправление 502 / crash loop)
+
+### Причина
+- `next start` падал с `TypeError: Cannot read properties of undefined (reading '/_middleware')`.
+- PM2 перезапускал приложение → crash loop → 502.
+- **Корень проблемы:** в Next.js 16 middleware переименован в proxy; при отсутствии `proxy.ts` пустой `middleware-manifest.json` приводит к undefined-доступу в рантайме.
+
+### Решение
+- Добавлен минимальный `proxy.ts` в корень проекта:
+  - `export function proxy(request) { return NextResponse.next(); }`
+  - Просто пропускает запросы без изменений.
+- Сборка: `npm run build:webpack` (или `pnpm build --webpack`).
+- После добавления proxy.ts `next start` работает стабильно, главная отдаёт 200.

@@ -117,12 +117,12 @@ Edit `app/globals.css` and `app/page.tsx` to customize the design. The portfolio
 
 ## Deployment
 
-### Manual deploy to VPS
+### Вариант A: Деплой на сервере (если билд не зависает)
 
-После `git push origin main` задеплоить вручную по SSH:
+После `git push origin main`:
 
 ```bash
-ssh root@82.146.40.70  # или ваш PROD_HOST
+ssh root@82.146.40.70
 
 cd /var/www/portfolio
 git fetch --prune origin main
@@ -139,6 +139,25 @@ pnpm build --webpack
 pm2 delete portfolio || true
 pm2 start "pnpm start -p 3000" --name portfolio --cwd /var/www/portfolio
 pm2 save
+```
+
+### Вариант B: Pre-built деплой (если билд на VPS зависает)
+
+Собрать локально и залить `.next` на сервер:
+
+```bash
+# 1. git push, затем локально собрать (webpack — стабильнее Turbopack)
+git push origin main
+npm run build:webpack
+
+# 2. Локально: создать deploy-sha
+node -e "require('fs').writeFileSync('public/deploy-sha.txt', require('child_process').execSync('git rev-parse HEAD').toString().trim())"
+
+# 3. Локально: залить на сервер (PowerShell)
+scp -r .next public/deploy-sha.txt root@82.146.40.70:/var/www/portfolio/
+
+# 4. По SSH: git pull (код) + перезапуск
+ssh root@82.146.40.70 "cd /var/www/portfolio && git pull origin main && pm2 restart all"
 ```
 
 ## Technologies Used
