@@ -34,7 +34,7 @@ export interface Project {
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    const query = `*[_type == "project"] | order(date desc) {
+    const query = `*[_type == "project"] | order(order desc, date desc) {
       _id,
       title,
       slug,
@@ -67,7 +67,7 @@ export async function getProjectsByLocale(locale: Locale = 'ru'): Promise<Projec
     const shortDescriptionExpr = locale === 'en' ? 'coalesce(shortDescriptionEn, shortDescription)' : 'shortDescription'
     const tagsExpr = locale === 'en' ? 'coalesce(tagsEn, tags)' : 'tags'
 
-    const query = `*[_type == "project"] | order(date desc) {
+    const query = `*[_type == "project"] | order(order desc, date desc) {
       _id,
       "title": ${titleExpr},
       slug,

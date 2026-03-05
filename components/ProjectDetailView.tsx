@@ -188,7 +188,7 @@ export function ProjectDetailView({
             prevScene: 'Previous scene',
             nextScene: 'Next scene',
             imageDialog: 'Image preview',
-            collaborationWith: 'In collaboration with',
+            collaborationWith: 'As part of',
           }
         : {
             toProjects: 'К проектам',
@@ -199,7 +199,7 @@ export function ProjectDetailView({
             prevScene: 'Предыдущая сцена',
             nextScene: 'Следующая сцена',
             imageDialog: 'Просмотр изображения',
-            collaborationWith: 'Совместно с',
+            collaborationWith: 'В составе',
           },
     [locale]
   )
@@ -770,7 +770,7 @@ export function ProjectDetailView({
                 )}
               </div>
 
-              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-5 pt-6 pb-5 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
+              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-5 pt-8 pb-8 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
                 <Link
                   href={projectsHref}
                   className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-thin text-lg"

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getProjectsByLocale } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
 import { ProjectCardImage } from '@/components/ProjectCardImage'
+import { ProjectsPageClient } from '@/components/ProjectsPageClient'
 
 export const metadata: Metadata = {
   title: 'Projects | Иван Россолов — Продуктовый Дизайнер',
@@ -33,26 +34,9 @@ export default async function ProjectsPage() {
   const projects = await getProjectsByLocale('ru')
 
   return (
-    <main className="w-screen h-screen relative overflow-x-hidden overflow-y-auto scrollbar-hide">
-      {/* Content */}
-      <div className="relative z-10 w-full flex flex-col min-h-full">
-        {/* Header with Back Button */}
-        <div className="sticky top-0 z-20 pt-[calc(2rem+env(safe-area-inset-top))] px-4 pb-2 flex-shrink-0 bg-[#00060a]">
-          <div className="max-w-7xl mx-auto">
-            <Link
-              href="/"
-              className="inline-flex h-9 lg:h-auto items-center gap-1 text-white/80 hover:text-[#affc41] active:text-[#affc41] transition-colors font-thin text-sm lg:text-lg"
-            >
-              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              На главную
-            </Link>
-          </div>
-        </div>
-
-        {/* Projects Grid */}
-        <div className="flex-1 w-full">
+    <ProjectsPageClient>
+      {/* Projects Grid */}
+      <div className="flex-1 w-full">
           <div className="w-full px-4 pt-4 pb-6 md:py-16">
             <div className="max-w-7xl mx-auto">
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
@@ -114,7 +98,6 @@ export default async function ProjectsPage() {
             </div>
           </div>
         </div>
-      </div>
-    </main>
+    </ProjectsPageClient>
   )
 }

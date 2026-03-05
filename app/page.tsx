@@ -147,13 +147,22 @@ export default function Home() {
         </Link>
       </div>
 
-      {/* Mobile Layout — сгруппированный текст, плотнее межблочные отступы */}
+      {/* Mobile Layout — отступы как у кнопки «Проекты»: left-5/right-5 до 740px, left-7/right-7 выше */}
       <div
-        className="md:hidden absolute inset-0 flex flex-col items-center justify-start px-6 py-6 z-20 pt-14 gap-4 overflow-y-auto scrollbar-hide"
+        className="md:hidden absolute inset-0 flex flex-col items-center justify-start px-7 max-[740px]:px-5 py-6 z-20 pt-14 gap-4 overflow-y-auto scrollbar-hide"
         style={{ paddingBottom: 'max(184px, calc(136px + env(safe-area-inset-bottom)))' }}
       >
-        <div className="w-full shrink-0">
-          <h1 className="text-center font-semibold text-white tracking-[0.2em] whitespace-nowrap w-full leading-none" style={{ fontSize: 'clamp(22px, 8vw, 40px)' }}>ВАНЯ РОССОЛОВ</h1>
+        <div className="w-full shrink-0 min-w-0 self-stretch @container">
+          <h1
+            className="font-semibold text-white tracking-[0.2em] leading-tight whitespace-nowrap w-full"
+            style={{
+              fontSize: 'min(9.5cqw, 7.8vw)',
+              textAlign: 'justify',
+              textJustify: 'inter-character',
+            }}
+          >
+            ВАНЯ РОССОЛОВ
+          </h1>
         </div>
 
         <div className="w-full h-[clamp(140px,26vh,320px)] rounded-lg overflow-hidden shrink-0">
