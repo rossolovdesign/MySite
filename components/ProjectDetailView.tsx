@@ -747,7 +747,7 @@ export function ProjectDetailView({
             </div>
 
             {/* Right: контент сверху, карточка с кнопкой и заголовком внизу */}
-            <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(48px,env(safe-area-inset-top))] pl-8 pr-[120px] pb-[48px] overflow-hidden">
+            <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(120px,env(safe-area-inset-top))] pl-8 pr-8 pb-[48px] overflow-hidden">
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
                 {activeScene ? (
                   <div className="space-y-4">
