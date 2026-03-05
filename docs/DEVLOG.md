@@ -284,3 +284,12 @@
 ### Синхронизация main с продом
 - Merge `reserve/local-geologica-fonts` → `main` (коммит `0a255a5`).
 - main = прод: локальные шрифты + исправленный workflow.
+
+---
+
+## Update 2026-03-05 (ручной деплой)
+
+### Удалён автодеплой (GitHub Actions)
+- Удалён `.github/workflows/deploy-production.yml`.
+- Причина: автодеплой показывал успех, но на проде оставался старый SHA; возможная связь с майнером/нагрузкой на VPS.
+- Деплой теперь вручную по SSH (см. README → Deployment).

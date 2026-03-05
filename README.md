@@ -117,29 +117,29 @@ Edit `app/globals.css` and `app/page.tsx` to customize the design. The portfolio
 
 ## Deployment
 
-### Auto-deploy to VPS (GitHub Actions)
+### Manual deploy to VPS
+
+После `git push origin main` задеплоить вручную по SSH:
 
 ```bash
-git add .
-git commit -m "Setup production auto-deploy"
-git push origin main
+ssh root@82.146.40.70  # или ваш PROD_HOST
+
+cd /var/www/portfolio
+git fetch --prune origin main
+git checkout main
+git reset --hard origin/main
+git clean -fd -e '.env*'
+
+pkill -f "next build" || true
+pnpm install --no-frozen-lockfile
+export NODE_OPTIONS=--max-old-space-size=2048
+printf "%s" "$(git rev-parse HEAD)" > public/deploy-sha.txt
+pnpm build --webpack
+
+pm2 delete portfolio || true
+pm2 start "pnpm start -p 3000" --name portfolio --cwd /var/www/portfolio
+pm2 save
 ```
-
-Then configure GitHub repository secrets:
-
-- `PROD_HOST` - server IP or domain (example: `82.146.40.70`)
-- `PROD_USER` - SSH user (example: `root`)
-- `PROD_SSH_KEY` - private SSH key content used for deploy access
-
-Workflow file: `.github/workflows/deploy-production.yml`
-
-What it does on every push to `main`:
-1. Connects to VPS via SSH
-2. Pulls latest `main` in `/var/www/portfolio`
-3. Runs `pnpm install --frozen-lockfile`
-4. Builds with `NODE_OPTIONS=--max-old-space-size=2048`
-5. Verifies `.next/BUILD_ID` exists
-6. Restarts `pm2` process `portfolio`
 
 ## Technologies Used
 
