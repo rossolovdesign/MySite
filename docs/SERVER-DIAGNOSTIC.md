@@ -61,7 +61,35 @@ ps -eo pid,ppid,cmd | grep -E "\.16|2577547" | head -5
 
 ---
 
-## 2. Проверка деплоя (ручной)
+## 2. Pre-built деплой (без кэша — надёжнее scp)
+
+scp падает на больших .pack в `.next/cache`. Кэш не нужен для `next start`.
+
+**Локально (PowerShell):**
+```powershell
+cd "e:\Работа\Портфолио\b_taYsWcfVdjZ-1772306686522"
+Remove-Item -Recurse -Force .next\cache -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .next\dev -ErrorAction SilentlyContinue
+tar -czf next.tar.gz -C .next .
+scp next.tar.gz root@82.146.40.70:/var/www/portfolio/
+```
+
+**На сервере (SSH):**
+```bash
+cd /var/www/portfolio
+pm2 stop portfolio
+rm -rf .next
+mkdir .next
+tar -xzf next.tar.gz -C .next
+rm next.tar.gz
+pm2 start portfolio
+pm2 save
+pm2 logs portfolio --lines 5 --nostream
+```
+
+---
+
+## 3. Проверка деплоя (ручной)
 
 ```bash
 echo "=== GIT STATE ==="
@@ -80,13 +108,15 @@ cd /var/www/portfolio && git log -3 --oneline
 
 ---
 
-## 3. Полная очистка майнера (если persistence найден)
+## 3. Полная очистка майнера (включая .bashrc)
+
+**Важно:** майнер модифицирует `/root/.bashrc` — добавляет `top()` и `crontab()` для сокрытия. Нужно очистить и .bashrc.
 
 ```bash
 # Убить процессы
 pkill -9 -f "/tmp/.16"
 pkill -9 -f "for p in /proc"
-rm -f /tmp/.16 /tmp/file*
+rm -f /tmp/.16 /tmp/file* /var/tmp/snap /var/tmp/apt.log
 
 # Очистить ld.so.preload
 echo "" | tee /etc/ld.so.preload
@@ -98,8 +128,10 @@ printf '' > /var/spool/cron/crontabs/root
 chattr +i /var/spool/cron/crontabs/root
 systemctl start cron
 
-# Удалить вредоносные файлы
-rm -f /var/tmp/apt.log
+# Восстановить .bashrc (удалить top/crontab override и прочий вредоносный код)
+cp /etc/skel/.bashrc /root/.bashrc
+# Если нужны свои настройки — отредактировать после
+
 cp /etc/skel/.bash_logout /root/.bash_logout 2>/dev/null
 
 # Проверить /etc/cron.d и cron.hourly
@@ -110,7 +142,56 @@ rm -f /etc/cron.d/0 /etc/cron.hourly/0 2>/dev/null
 
 ---
 
-## 4. Если майнер вернулся повторно
+## 4. Глубокая диагностика persistence (если майнер возвращается)
+
+Выполнить **до** очистки (пока майнер работает) — чтобы увидеть родителя:
+
+```bash
+echo "=== РОДИТЕЛЬ МАЙНЕРА (ppid) ==="
+MINER_PID=$(pgrep -f "/tmp/.16" | head -1)
+[ -n "$MINER_PID" ] && ps -o pid,ppid,user,cmd -p $MINER_PID && echo "Parent of $MINER_PID:" && ps -o pid,ppid,user,cmd -p $(ps -o ppid= -p $MINER_PID 2>/dev/null | tr -d ' ') 2>/dev/null
+
+echo ""
+echo "=== /root/.bashrc (первые 50 строк) ==="
+head -50 /root/.bashrc
+
+echo ""
+echo "=== /root/.profile ==="
+cat /root/.profile 2>/dev/null
+
+echo ""
+echo "=== /root/.bash_logout ==="
+cat /root/.bash_logout 2>/dev/null
+
+echo ""
+echo "=== /etc/profile.d/ (файлы с подозрительным содержимым) ==="
+grep -l "tmp\|apt\|snap\|chattr\|var/tmp" /etc/profile.d/* 2>/dev/null || echo "none"
+for f in /etc/profile.d/*.sh; do [ -f "$f" ] && grep -E "tmp|apt|snap|chattr|var/tmp|\.16" "$f" 2>/dev/null && echo "--- in $f ---"; done
+
+echo ""
+echo "=== /etc/rc.local ==="
+cat /etc/rc.local 2>/dev/null
+
+echo ""
+echo "=== Содержимое /etc/cron.d/ (все файлы) ==="
+for f in /etc/cron.d/*; do [ -f "$f" ] && echo "--- $f ---" && cat "$f"; done
+
+echo ""
+echo "=== systemd user timers (root) ==="
+sudo -u root XDG_RUNTIME_DIR=/run/user/0 systemctl --user list-timers --all 2>/dev/null | head -30
+
+echo ""
+echo "=== Поиск apt.log/snap/.16 в системе ==="
+grep -r "apt\.log\|/var/tmp/snap\|/tmp/\.16" /etc/cron* /var/spool/cron /root/.* 2>/dev/null | head -20
+
+echo ""
+echo "=== Все crontab пользователей ==="
+for u in root $(ls /var/spool/cron/crontabs/ 2>/dev/null); do echo "--- $u ---"; cat /var/spool/cron/crontabs/$u 2>/dev/null; done
+```
+
+---
+
+## 5. Если майнер вернулся повторно
 
 - **Пересоздание VPS** — единственный надёжный вариант. Rootkit мог оставить backdoor; persistence может быть в systemd, init.d, других пользователях.
 - Смени все пароли и ключи после пересоздания.

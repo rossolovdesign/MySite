@@ -143,21 +143,25 @@ pm2 save
 
 ### Вариант B: Pre-built деплой (если билд на VPS зависает)
 
-Собрать локально и залить `.next` на сервер:
+Собрать локально, упаковать без кэша (scp падает на .pack), залить архив:
+
+```powershell
+# 1. Локально: сборка
+npm run build:webpack
+Remove-Item -Recurse -Force .next\cache, .next\dev -ErrorAction SilentlyContinue
+tar -czf next.tar.gz -C .next .
+scp next.tar.gz root@82.146.40.70:/var/www/portfolio/
+```
 
 ```bash
-# 1. git push, затем локально собрать (webpack — стабильнее Turbopack)
-git push origin main
-npm run build:webpack
-
-# 2. Локально: создать deploy-sha
-node -e "require('fs').writeFileSync('public/deploy-sha.txt', require('child_process').execSync('git rev-parse HEAD').toString().trim())"
-
-# 3. Локально: залить на сервер (PowerShell)
-scp -r .next public/deploy-sha.txt root@82.146.40.70:/var/www/portfolio/
-
-# 4. По SSH: git pull (код) + перезапуск
-ssh root@82.146.40.70 "cd /var/www/portfolio && git pull origin main && pm2 restart all"
+# 2. На сервере (SSH)
+cd /var/www/portfolio
+git pull origin main
+pm2 stop portfolio
+rm -rf .next && mkdir .next
+tar -xzf next.tar.gz -C .next && rm next.tar.gz
+pm2 start portfolio
+pm2 save
 ```
 
 ## Technologies Used

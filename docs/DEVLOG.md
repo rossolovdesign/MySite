@@ -326,3 +326,9 @@
   - Просто пропускает запросы без изменений.
 - Сборка: `npm run build:webpack` (или `pnpm build --webpack`).
 - После добавления proxy.ts `next start` работает стабильно, главная отдаёт 200.
+
+### Pre-built деплой (tar вместо scp -r)
+- `scp -r .next` падал на больших `.pack` в `.next/cache` (Connection reset).
+- Кэш не нужен для `next start` — удаляем перед упаковкой.
+- Надёжный способ: `tar -czf next.tar.gz -C .next .` → scp одного файла (~5 MB) → на сервере `tar -xzf`.
+- Инструкции: `docs/SERVER-DIAGNOSTIC.md` (раздел 2), `README.md` (вариант B).
