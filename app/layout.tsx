@@ -3,6 +3,7 @@ import localFont from 'next/font/local'
 import { SiteBackground } from '@/components/SiteBackground'
 import { CustomCursor } from '@/components/CustomCursor'
 import { getSiteUrl } from '@/lib/site'
+import { DEFAULT_OG_TITLE, DEFAULT_OG_DESCRIPTION, DEFAULT_SITE_NAME } from '@/lib/metadata'
 import './globals.css'
 
 const geologica = localFont({
@@ -19,9 +20,9 @@ const siteUrl = getSiteUrl()
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  applicationName: 'Иван Россолов — Портфолио',
-  title: 'Ваня Россолов — продуктовый дизайнер',
-  description: 'Портфолио продуктового дизайнера: проекты, кейсы, UX/UI решения и визуальные концепции.',
+  applicationName: DEFAULT_SITE_NAME,
+  title: DEFAULT_OG_TITLE,
+  description: DEFAULT_OG_DESCRIPTION,
   generator: 'v0.app',
   alternates: {
     canonical: '/',
@@ -34,14 +35,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ru_RU',
     url: '/',
-    siteName: 'Иван Россолов — Портфолио',
-    title: 'Ваня Россолов — продуктовый дизайнер',
-    description: 'Портфолио продуктового дизайнера: проекты, кейсы, UX/UI решения и визуальные концепции.',
+    siteName: DEFAULT_SITE_NAME,
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ваня Россолов — продуктовый дизайнер',
-    description: 'Портфолио продуктового дизайнера: проекты, кейсы, UX/UI решения и визуальные концепции.',
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
   },
   icons: {
     icon: '/icon.svg',

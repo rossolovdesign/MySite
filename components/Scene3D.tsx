@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react'
 export function Scene3D() {
   const containerRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
+  const loadingRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -13,7 +14,13 @@ export function Scene3D() {
     let disposed = false
     let isAnimating = true
 
+    const hideLoading = () => {
+      loadingRef.current?.classList.add('hidden')
+      loadingRef.current?.classList.remove('flex')
+    }
+
     const showOverlay = (message: string) => {
+      hideLoading()
       const el = overlayRef.current
       if (!el) return
       el.textContent = message
@@ -73,6 +80,11 @@ export function Scene3D() {
       pointLight.position.set(-5, -5, 5)
       scene.add(pointLight)
 
+      // Подсветка снизу
+      const bottomLight = new THREE.PointLight(0xa8d4ff, 1.2)
+      bottomLight.position.set(0, -2, 0.5)
+      scene.add(bottomLight)
+
       // Загрузка модели
       const loader = new GLTFLoader()
       let model: THREE.Group
@@ -106,6 +118,7 @@ export function Scene3D() {
         model.rotation.order = 'YXZ'
         model.rotation.set(0, Math.PI, 0)
         scene.add(model)
+        if (!disposed) hideLoading()
       } catch (error) {
         console.error('[v0] Failed to load model:', error)
         if (!disposed) showOverlay('Ошибка загрузки 3D. Перезагрузите страницу')
@@ -228,6 +241,12 @@ export function Scene3D() {
 
   return (
     <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden relative">
+      <div
+        ref={loadingRef}
+        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20 text-white/80 text-sm font-thin"
+      >
+        Загрузка 3D
+      </div>
       <div
         ref={overlayRef}
         className="pointer-events-none absolute inset-0 hidden items-center justify-center bg-black/30 text-white/70 text-sm font-thin text-center px-4"

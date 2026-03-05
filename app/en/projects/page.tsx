@@ -4,16 +4,28 @@ import { getProjectsByLocale } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
 import { ProjectCardImage } from '@/components/ProjectCardImage'
 import { ProjectsPageClient } from '@/components/ProjectsPageClient'
+import { DEFAULT_OG_TITLE, DEFAULT_OG_DESCRIPTION } from '@/lib/metadata'
 
 export const metadata: Metadata = {
   title: 'Projects | Ivan Rossolov — Product Designer',
-  description: 'Selected product design projects and case studies.',
+  description: DEFAULT_OG_DESCRIPTION,
   alternates: {
     canonical: '/en/projects',
     languages: {
       en: '/en/projects',
       ru: '/projects',
     },
+  },
+  openGraph: {
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
+    url: '/en/projects',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
   },
 }
 

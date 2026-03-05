@@ -25,7 +25,7 @@ export default function Home() {
         </div>
 
         {/* Content Row - та же ширина, что и заголовок выше */}
-        <div className="flex items-start justify-between w-full gap-12 lg:gap-20 max-w-[1400px]">
+        <div className="flex items-start justify-between w-full max-w-[1400px]">
           {/* Left Column - Aligns with left edge of heading */}
           <div className="flex flex-col gap-6 flex-shrink-0 animate-in fade-in duration-700" style={{ maxWidth: '280px', textAlign: 'left' }}>
             <div className="inline-flex h-12 items-center justify-center gap-2.5 px-4 py-3 bg-[#affc41] rounded-full border border-white/30 whitespace-nowrap flex-shrink-0">
@@ -41,8 +41,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Center - 3D Scene */}
-          <div className="w-72 flex-shrink-0 animate-in fade-in duration-700" style={{ height: '500px', maxWidth: '440px' }}>
+          {/* Center - 3D Scene (масштабируется под экран) */}
+          <div
+            className="flex-shrink-0 animate-in fade-in duration-700"
+            style={{
+              width: 'clamp(200px, 35vw, 440px)',
+              height: 'clamp(280px, 45vh, 500px)',
+            }}
+          >
             <Scene3D />
           </div>
 

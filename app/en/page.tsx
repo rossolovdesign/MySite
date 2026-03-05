@@ -1,16 +1,28 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Scene3D } from '@/components/Scene3D'
+import { DEFAULT_OG_TITLE, DEFAULT_OG_DESCRIPTION } from '@/lib/metadata'
 
 export const metadata: Metadata = {
   title: 'Ivan Rossolov — Product Designer',
-  description: 'Product designer portfolio: projects, UX/UI case studies and visual concepts.',
+  description: DEFAULT_OG_DESCRIPTION,
   alternates: {
     canonical: '/en',
     languages: {
       en: '/en',
       ru: '/',
     },
+  },
+  openGraph: {
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
+    url: '/en',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
   },
 }
 
@@ -24,7 +36,7 @@ export default function HomeEn() {
           </h1>
         </div>
 
-        <div className="flex items-start justify-between w-full gap-12 lg:gap-20 max-w-[1400px]">
+        <div className="flex items-start justify-between w-full max-w-[1400px]">
           <div className="flex flex-col gap-6 flex-shrink-0 animate-in fade-in duration-700" style={{ maxWidth: '280px', textAlign: 'left' }}>
             <div className="inline-flex h-12 items-center justify-center gap-2.5 px-4 py-3 bg-[#affc41] rounded-full border border-white/30 whitespace-nowrap flex-shrink-0">
               <span className="font-thin text-[#00060a] text-2xl tracking-wider whitespace-nowrap">PRODUCT DESIGNER</span>
@@ -37,7 +49,13 @@ export default function HomeEn() {
             </div>
           </div>
 
-          <div className="w-72 flex-shrink-0 animate-in fade-in duration-700" style={{ height: '500px', maxWidth: '440px' }}>
+          <div
+            className="flex-shrink-0 animate-in fade-in duration-700"
+            style={{
+              width: 'clamp(200px, 35vw, 440px)',
+              height: 'clamp(280px, 45vh, 500px)',
+            }}
+          >
             <Scene3D />
           </div>
 

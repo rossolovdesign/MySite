@@ -4,10 +4,11 @@ import { getProjectsByLocale } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
 import { ProjectCardImage } from '@/components/ProjectCardImage'
 import { ProjectsPageClient } from '@/components/ProjectsPageClient'
+import { DEFAULT_OG_TITLE, DEFAULT_OG_DESCRIPTION } from '@/lib/metadata'
 
 export const metadata: Metadata = {
-  title: 'Projects | Иван Россолов — Продуктовый Дизайнер',
-  description: 'Подборка проектов и кейсов: продуктовый дизайн, UX/UI, визуальные решения и прототипы.',
+  title: 'Проекты | Иван Россолов',
+  description: DEFAULT_OG_DESCRIPTION,
   alternates: {
     canonical: '/projects',
     languages: {
@@ -16,15 +17,15 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Projects | Иван Россолов — Продуктовый Дизайнер',
-    description: 'Подборка проектов и кейсов: продуктовый дизайн, UX/UI, визуальные решения и прототипы.',
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
     url: '/projects',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Projects | Иван Россолов — Продуктовый Дизайнер',
-    description: 'Подборка проектов и кейсов: продуктовый дизайн, UX/UI, визуальные решения и прототипы.',
+    title: DEFAULT_OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
   },
 }
 
