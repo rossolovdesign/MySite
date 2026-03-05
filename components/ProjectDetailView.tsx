@@ -742,36 +742,9 @@ export function ProjectDetailView({
               </div>
             </div>
 
-            {/* Right: фиксированный блок + переключатель по заголовкам внизу */}
-            <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(1.5rem,env(safe-area-inset-top))] pl-8 pr-8 pb-8 overflow-hidden">
-              <div className="rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-5 pt-6 pb-5 mb-0 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
-                <Link
-                  href={projectsHref}
-                  className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-thin text-lg"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  {copy.toProjects}
-                </Link>
-                <div className="mt-3 border-t border-white/15" aria-hidden />
-                <h1 className="text-white/95 font-thin text-xl leading-snug mt-3">{project.title}</h1>
-                {project.collaboration?.url && project.collaboration.title && (
-                  <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-thin">
-                    {copy.collaborationWith}{' '}
-                    <a
-                      href={project.collaboration.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 hover:text-white transition-colors"
-                    >
-                      {project.collaboration.title}
-                    </a>
-                  </p>
-                )}
-              </div>
-
-              <div className="mt-8 flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
+            {/* Right: контент сверху, карточка с кнопкой и заголовком внизу */}
+            <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(48px,env(safe-area-inset-top))] pl-8 pr-8 pb-[48px] overflow-hidden">
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
                 {activeScene ? (
                   <div className="space-y-4">
                     <h2 className="text-white font-thin text-3xl leading-custom">{activeScene.title}</h2>
@@ -797,6 +770,32 @@ export function ProjectDetailView({
                 )}
               </div>
 
+              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-5 pt-6 pb-5 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
+                <Link
+                  href={projectsHref}
+                  className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-thin text-lg"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  {copy.toProjects}
+                </Link>
+                <div className="mt-3 border-t border-white/15" aria-hidden />
+                <h1 className="text-white/95 font-thin text-xl leading-snug mt-3">{project.title}</h1>
+                {project.collaboration?.url && project.collaboration.title && (
+                  <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-thin">
+                    {copy.collaborationWith}{' '}
+                    <a
+                      href={project.collaboration.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 hover:text-white transition-colors"
+                    >
+                      {project.collaboration.title}
+                    </a>
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
