@@ -4,6 +4,29 @@
 
 ---
 
+## 0. Срочно: кто жрёт CPU (если 100% вернулось)
+
+```bash
+echo "=== TOP CPU (5 процессов) ==="
+ps aux --sort=-%cpu | head -6
+echo ""
+echo "=== ПРОЦЕССЫ В /tmp ==="
+ls -la /tmp/
+echo ""
+echo "=== СКРЫТЫЕ В /tmp ==="
+ls -la /tmp/.* 2>/dev/null || echo "none"
+echo ""
+echo "=== /tmp/.16 существует? ==="
+ls -la /tmp/.16 2>/dev/null || echo "not found"
+echo ""
+echo "=== ld.so.preload (rootkit) ==="
+cat /etc/ld.so.preload 2>/dev/null || echo "empty/not found"
+```
+
+Если видишь процесс с высоким %CPU — запомни PID и путь. Если путь `/tmp/.16` или `/tmp/file*` — это майнер. Сразу: `pkill -9 -f "/tmp/.16"` и переходи к разделу 3.
+
+---
+
 ## 1. Поиск persistence майнера
 
 ```bash
@@ -84,3 +107,11 @@ rm -f /etc/cron.d/0 /etc/cron.hourly/0 2>/dev/null
 ```
 
 **Внимание:** `chattr +i` на crontab блокирует запись — вы не сможете добавлять новые cron-задачи. Чтобы снять: `chattr -i /var/spool/cron/crontabs/root`.
+
+---
+
+## 4. Если майнер вернулся повторно
+
+- **Пересоздание VPS** — единственный надёжный вариант. Rootkit мог оставить backdoor; persistence может быть в systemd, init.d, других пользователях.
+- Смени все пароли и ключи после пересоздания.
+- Проверь, как произошло первоначальное заражение (слабый пароль SSH, уязвимость в веб-приложении, необновлённая система).
