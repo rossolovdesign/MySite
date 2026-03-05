@@ -41,7 +41,7 @@ export default async function ProjectsPageEn() {
                         key={project._id}
                         href={`/en/projects/${project.slug.current}`}
                         prefetch={false}
-                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04]"
+                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] active:bg-[#affc41]/10 active:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] active:scale-[1.04]"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-[#003d5c] to-[#00060a] flex-shrink-0">
@@ -56,7 +56,7 @@ export default async function ProjectsPageEn() {
                           {project.tags && project.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-2">
                               {project.tags.map((tag) => (
-                                <span key={tag} className="text-xs px-2.5 py-1 rounded-full border border-[#affc41]/40 text-[#affc41] font-thin whitespace-nowrap">
+                                <span key={tag} className="text-xs px-2.5 py-1 rounded-full border border-white/30 bg-[#affc41] text-[#00060a] font-normal uppercase whitespace-nowrap">
                                   {tag}
                                 </span>
                               ))}

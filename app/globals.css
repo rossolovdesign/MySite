@@ -21,7 +21,7 @@
   body {
     @apply bg-[#00060a] text-white;
     overflow: hidden;
-    background: radial-gradient(50% 50% at 75% 50%, rgba(0,6,10,1) 0%, rgba(0,32,51,1) 51%, rgba(0,6,10,1) 100%);
+    /* Фон задаётся только в SiteBackground — единый источник для всех страниц */
   }
 }
 

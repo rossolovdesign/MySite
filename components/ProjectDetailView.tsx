@@ -35,6 +35,7 @@ const CoverImageBox = memo(function CoverImageBox({
   maxHeight,
   dimmed = false,
   onOpenImage,
+  rounded = true,
 }: {
   mediaType?: SceneMediaType
   imageUrl: string | null
@@ -45,6 +46,8 @@ const CoverImageBox = memo(function CoverImageBox({
   maxHeight?: string
   dimmed?: boolean
   onOpenImage?: (imageUrl: string, alt: string) => void
+  /** На мобилке можно отключить скругления для картинки на всю ширину */
+  rounded?: boolean
 }) {
   const [loaded, setLoaded] = useState(false)
   const [measuredAspectRatio, setMeasuredAspectRatio] = useState<number | null>(null)
@@ -103,7 +106,7 @@ const CoverImageBox = memo(function CoverImageBox({
     width: `min(100%, ${widthFromHeight})`,
     minHeight: 0,
     overflow: 'hidden',
-    borderRadius: IMAGE_ROUNDING_PX,
+    borderRadius: rounded ? IMAGE_ROUNDING_PX : 0,
   }
 
   const showSkeleton = !isLottie && imageUrl && !loaded
@@ -655,10 +658,10 @@ export function ProjectDetailView({
             {/* Left: images. Mobile — стопка (одна картинка), desktop — скролл. */}
             <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
               <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-                {/* Mobile: свайп-галерея с анимацией перелистывания. Карточка фиксирована на 40vh снизу. */}
+                {/* Mobile: свайп-галерея на всю ширину без скруглений. Карточка фиксирована на 35vh снизу. */}
                 <div
                   ref={mobileGalleryRef}
-                  className="lg:hidden flex-1 min-h-0 flex items-center justify-start overflow-hidden pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[calc(2rem+env(safe-area-inset-top))] pb-[40vh] touch-pan-y w-full min-w-0"
+                  className="lg:hidden flex-1 min-h-0 flex items-center justify-start overflow-hidden pt-[calc(2rem+env(safe-area-inset-top))] pb-[35vh] touch-pan-y w-full min-w-0"
                   onTouchStart={handleMobileTouchStart}
                   onTouchEnd={handleMobileTouchEnd}
                   onTouchCancel={handleMobileTouchEnd}
@@ -696,6 +699,7 @@ export function ProjectDetailView({
                           maxHeight={SECTION_HEIGHT_VH_CSS}
                           dimmed={activeIndex !== i}
                           onOpenImage={handleOpenSceneImage}
+                          rounded={false}
                         />
                       </div>
                     ))}
@@ -759,7 +763,7 @@ export function ProjectDetailView({
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="text-xs px-2.5 py-1 rounded-full border border-[#affc41]/40 text-[#affc41] font-thin whitespace-nowrap"
+                            className="text-xs px-2.5 py-1 rounded-full border border-white/30 bg-[#affc41] text-[#00060a] font-normal uppercase whitespace-nowrap"
                           >
                             {tag}
                           </span>
@@ -865,33 +869,9 @@ export function ProjectDetailView({
             }}
           >
             <div
-              className="mx-auto max-w-md rounded-full p-3 flex items-center justify-between gap-2"
+              className="mx-auto max-w-md rounded-full p-3 flex items-center justify-end gap-2"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    zoomOut()
-                  }}
-                  className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#00060a]/70"
-                  aria-label={copy.zoomOut}
-                >
-                  -
-                </button>
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    zoomIn()
-                  }}
-                  className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#00060a]/70"
-                  aria-label={copy.zoomIn}
-                >
-                  +
-                </button>
-              </div>
               <button
                 type="button"
                 onClick={(event) => {
@@ -977,8 +957,8 @@ export function ProjectDetailView({
         </div>
       )}
 
-      {/* Mobile: фиксированная карточка на половину экрана, края в край экрана */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 h-[40vh] flex flex-col">
+      {/* Mobile: фиксированная карточка 35% экрана, края в край экрана */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 h-[35vh] flex flex-col">
         <div className="flex-1 min-h-0 rounded-t-[20px] border border-[#00a1ff]/30 border-b-0 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-4 pt-4 pb-0 shadow-[0_12px_36px_rgba(0,20,35,0.45)] overflow-y-auto scrollbar-hide flex flex-col items-stretch">
           <div className="pb-2 flex-shrink-0">
             <div className="flex items-center justify-between gap-3">
@@ -997,7 +977,7 @@ export function ProjectDetailView({
                     type="button"
                     onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
                     disabled={!hasPrevScene}
-                    className="h-9 w-9 rounded-full border border-[#affc41]/40 text-[#affc41] bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
                     aria-label={copy.prevScene}
                   >
                     <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1011,7 +991,7 @@ export function ProjectDetailView({
                     type="button"
                     onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
                     disabled={!hasNextScene}
-                    className="h-9 w-9 rounded-full border border-[#affc41]/40 text-[#affc41] bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
                     aria-label={copy.nextScene}
                   >
                     <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
