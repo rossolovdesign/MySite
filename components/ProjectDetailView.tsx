@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import type { Project, Scene } from '@/sanity/queries'
 import type { Locale } from '@/lib/i18n'
+import { clamp } from '@/lib/utils'
 
 /** Радиус скругления для всех картинок проекта (обложка и сцены). */
 const IMAGE_ROUNDING_PX = 32
@@ -20,11 +21,8 @@ const SECTION_HEIGHT_VH_CSS = `calc(100vh - ${2 * (SECTION_GAP_PX + SECTION_PEEK
 const MOBILE_SAFE_PAD_X_LEFT = 'max(16px, env(safe-area-inset-left))'
 const MOBILE_SAFE_PAD_X_RIGHT = 'max(16px, env(safe-area-inset-right))'
 const MOBILE_SAFE_PAD_BOTTOM = 'max(14px, env(safe-area-inset-bottom))'
+const SWIPE_THRESHOLD = 60
 type SceneMediaType = 'image' | 'gif' | 'lottie'
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value))
-}
 
 /** Контейнер по размеру картинки (aspect ratio) со скруглениями. Пока картинка грузится — skeleton. */
 const CoverImageBox = memo(function CoverImageBox({
@@ -210,14 +208,9 @@ export function ProjectDetailView({
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
   const [isDesktopLayout, setIsDesktopLayout] = useState(false)
 
-  const sortedScenes = useMemo(() => {
-    if (!project.scenes?.length) return []
-    return project.scenes
-  }, [project.scenes])
-
   const preparedScenes = useMemo(
     () =>
-      sortedScenes.map((scene) => ({
+      (project.scenes ?? []).map((scene) => ({
         ...scene,
         sceneMediaType:
           scene.mediaType === 'lottie' || scene.mediaType === 'gif' || scene.mediaType === 'image'
@@ -232,7 +225,7 @@ export function ProjectDetailView({
             ? scene.mediaFileUrl ?? null
             : null,
       })),
-    [sortedScenes]
+    [project.scenes]
   )
   const [mediaAspectRatios, setMediaAspectRatios] = useState<Record<string, number>>({})
 
@@ -243,10 +236,12 @@ export function ProjectDetailView({
     if (!candidates.length) return
 
     let cancelled = false
+    const probes: HTMLImageElement[] = []
     candidates.forEach((scene) => {
       const src = scene.imageUrl
       if (!src) return
       const probe = new Image()
+      probes.push(probe)
       probe.decoding = 'async'
       probe.onload = () => {
         if (cancelled || probe.naturalWidth <= 0 || probe.naturalHeight <= 0) return
@@ -260,6 +255,9 @@ export function ProjectDetailView({
 
     return () => {
       cancelled = true
+      probes.forEach((p) => {
+        p.src = ''
+      })
     }
   }, [preparedScenes, mediaAspectRatios])
 
@@ -271,6 +269,11 @@ export function ProjectDetailView({
   const [lightboxPan, setLightboxPan] = useState({ x: 0, y: 0 })
   const [isPanningLightbox, setIsPanningLightbox] = useState(false)
   const lightboxPanStartRef = useRef<{ pointerX: number; pointerY: number; startX: number; startY: number } | null>(null)
+
+  // Swipe для мобильной версии: drag offset для анимации перелистывания
+  const [mobileSwipeOffset, setMobileSwipeOffset] = useState(0)
+  const [mobileGalleryWidth, setMobileGalleryWidth] = useState(0)
+  const mobileSwipeStartRef = useRef<{ x: number; y: number } | null>(null)
   const panRafRef = useRef<number | null>(null)
   const pendingPanRef = useRef<{ x: number; y: number } | null>(null)
   const wheelZoomRafRef = useRef<number | null>(null)
@@ -313,7 +316,7 @@ export function ProjectDetailView({
       }
     )
 
-    sectionRefs.current.forEach((el) => {
+    sectionRefs.current.slice(0, sectionsCount).forEach((el) => {
       if (el) observer.observe(el)
     })
 
@@ -403,6 +406,70 @@ export function ProjectDetailView({
 
   const hasPrevScene = activeIndex > 0
   const hasNextScene = activeIndex < preparedScenes.length - 1
+  const mobileGalleryRef = useRef<HTMLDivElement>(null)
+
+  const handleMobileTouchStart = useCallback((e: React.TouchEvent) => {
+    mobileSwipeStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }, [])
+
+  const handleMobileTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!mobileSwipeStartRef.current || preparedScenes.length <= 1) return
+      const dx = e.touches[0].clientX - mobileSwipeStartRef.current.x
+      const dy = e.touches[0].clientY - mobileSwipeStartRef.current.y
+      if (Math.abs(dx) > Math.abs(dy)) {
+        e.preventDefault()
+        const maxDrag = 120
+        const clamped = clamp(dx, -maxDrag, maxDrag)
+        const offset =
+          activeIndex === 0 && dx > 0
+            ? clamped * 0.3
+            : activeIndex === preparedScenes.length - 1 && dx < 0
+              ? clamped * 0.3
+              : clamped
+        setMobileSwipeOffset(offset)
+      }
+    },
+    [activeIndex, preparedScenes.length]
+  )
+
+  const handleMobileTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!mobileSwipeStartRef.current || preparedScenes.length <= 1) {
+        setMobileSwipeOffset(0)
+        mobileSwipeStartRef.current = null
+        return
+      }
+      const dx = e.changedTouches[0].clientX - mobileSwipeStartRef.current.x
+      if (dx > SWIPE_THRESHOLD && hasPrevScene) {
+        goToSection(activeIndex - 1)
+      } else if (dx < -SWIPE_THRESHOLD && hasNextScene) {
+        goToSection(activeIndex + 1)
+      }
+      setMobileSwipeOffset(0)
+      mobileSwipeStartRef.current = null
+    },
+    [activeIndex, hasPrevScene, hasNextScene, preparedScenes.length, goToSection]
+  )
+
+  useEffect(() => {
+    const el = mobileGalleryRef.current
+    if (!el) return
+    el.addEventListener('touchmove', handleMobileTouchMove, { passive: false })
+    return () => el.removeEventListener('touchmove', handleMobileTouchMove)
+  }, [handleMobileTouchMove])
+
+  useEffect(() => {
+    const el = mobileGalleryRef.current
+    if (!el) return
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width ?? 0
+      setMobileGalleryWidth(width)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   const isLightboxOpen = Boolean(lightboxImageUrl)
   const canPanLightbox = lightboxZoom > 1.01
 
@@ -537,7 +604,7 @@ export function ProjectDetailView({
       let nearestIndex = 0
       let nearestDistance = Number.POSITIVE_INFINITY
 
-      sectionRefs.current.forEach((sectionEl, index) => {
+      sectionRefs.current.slice(0, preparedScenes.length).forEach((sectionEl, index) => {
         if (!sectionEl) return
         const rect = sectionEl.getBoundingClientRect()
         const sectionCenter = rect.top + rect.height / 2
@@ -588,23 +655,51 @@ export function ProjectDetailView({
             {/* Left: images. Mobile — стопка (одна картинка), desktop — скролл. */}
             <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
               <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-                {/* Mobile: одна картинка, переключение только стрелками. Карточка фиксирована на 40vh снизу. */}
+                {/* Mobile: свайп-галерея с анимацией перелистывания. Карточка фиксирована на 40vh снизу. */}
                 <div
-                  className="lg:hidden flex-1 min-h-0 flex items-center justify-center overflow-hidden pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[calc(2rem+env(safe-area-inset-top))] pb-[40vh]"
+                  ref={mobileGalleryRef}
+                  className="lg:hidden flex-1 min-h-0 flex items-center justify-start overflow-hidden pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[calc(2rem+env(safe-area-inset-top))] pb-[40vh] touch-pan-y w-full min-w-0"
+                  onTouchStart={handleMobileTouchStart}
+                  onTouchEnd={handleMobileTouchEnd}
+                  onTouchCancel={handleMobileTouchEnd}
                 >
-                  {activeScene && (
-                    <CoverImageBox
-                      mediaType={activeScene.sceneMediaType}
-                      imageUrl={activeScene.imageUrl}
-                      lottieFileUrl={activeScene.lottieFileUrl}
-                      alt={activeScene.title}
-                      precomputedAspectRatio={activeScene.imageUrl ? mediaAspectRatios[activeScene.imageUrl] ?? null : null}
-                      defaultAspectRatio={4 / 3}
-                      maxHeight={SECTION_HEIGHT_VH_CSS}
-                      dimmed={false}
-                      onOpenImage={handleOpenSceneImage}
-                    />
-                  )}
+                  <div
+                    className="flex h-full items-center flex-nowrap"
+                    style={{
+                      width:
+                        mobileGalleryWidth && preparedScenes.length
+                          ? `${preparedScenes.length * mobileGalleryWidth + (preparedScenes.length - 1) * 16}px`
+                          : '100%',
+                      transform: mobileGalleryWidth && preparedScenes.length
+                        ? `translateX(${-activeIndex * (mobileGalleryWidth + 16) + mobileSwipeOffset}px)`
+                        : 'none',
+                      transition: mobileSwipeOffset !== 0 ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    }}
+                  >
+                    {preparedScenes.map((scene, i) => (
+                      <div
+                        key={scene._id}
+                        className="flex h-full shrink-0 items-center justify-center"
+                        style={{
+                          width: mobileGalleryWidth ? `${mobileGalleryWidth}px` : '100%',
+                          minWidth: mobileGalleryWidth ? `${mobileGalleryWidth}px` : '100%',
+                          marginRight: i < preparedScenes.length - 1 ? 16 : 0,
+                        }}
+                      >
+                        <CoverImageBox
+                          mediaType={scene.sceneMediaType}
+                          imageUrl={scene.imageUrl}
+                          lottieFileUrl={scene.lottieFileUrl}
+                          alt={scene.title}
+                          precomputedAspectRatio={scene.imageUrl ? mediaAspectRatios[scene.imageUrl] ?? null : null}
+                          defaultAspectRatio={4 / 3}
+                          maxHeight={SECTION_HEIGHT_VH_CSS}
+                          dimmed={activeIndex !== i}
+                          onOpenImage={handleOpenSceneImage}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Desktop: скролл с секциями */}
@@ -722,7 +817,7 @@ export function ProjectDetailView({
                 event.stopPropagation()
                 zoomOut()
               }}
-              className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90"
+              className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 hover:bg-black/90"
               aria-label={copy.zoomOut}
             >
               -
@@ -733,7 +828,7 @@ export function ProjectDetailView({
                 event.stopPropagation()
                 setLightboxZoom(1)
               }}
-              className="h-10 px-3 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90 text-sm"
+              className="h-10 px-3 rounded-full border border-white/60 text-white bg-black/75 hover:bg-black/90 text-sm"
               aria-label={copy.resetZoom}
             >
               {Math.round(lightboxZoom * 100)}%
@@ -744,7 +839,7 @@ export function ProjectDetailView({
                 event.stopPropagation()
                 zoomIn()
               }}
-              className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90"
+              className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 hover:bg-black/90"
               aria-label={copy.zoomIn}
             >
               +
@@ -755,7 +850,7 @@ export function ProjectDetailView({
                 event.stopPropagation()
                 closeLightbox()
               }}
-              className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 shadow-lg hover:bg-black/90"
+              className="h-10 w-10 rounded-full border border-white/60 text-white bg-black/75 hover:bg-black/90"
               aria-label={copy.closeImage}
             >
               ✕
@@ -771,46 +866,44 @@ export function ProjectDetailView({
             }}
           >
             <div
-              className="mx-auto max-w-md rounded-full border border-[#00a1ff]/35 bg-[rgba(0,162,255,0.20)] backdrop-blur-xl p-3 shadow-[0_8px_30px_rgba(0,20,35,0.45)]"
+              className="mx-auto max-w-md rounded-full p-3 flex items-center justify-between gap-2"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      zoomOut()
-                    }}
-                    className="h-10 w-10 rounded-full border border-[#00a1ff]/45 text-white/90 bg-[#00060a]/70 shadow-[0_6px_18px_rgba(0,6,10,0.5)]"
-                    aria-label={copy.zoomOut}
-                  >
-                    -
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      zoomIn()
-                    }}
-                    className="h-10 w-10 rounded-full border border-[#00a1ff]/45 text-white/90 bg-[#00060a]/70 shadow-[0_6px_18px_rgba(0,6,10,0.5)]"
-                    aria-label={copy.zoomIn}
-                  >
-                    +
-                  </button>
-                </div>
+              <div className="flex items-center gap-4">
                 <button
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation()
-                    closeLightbox()
+                    zoomOut()
                   }}
-                  className="h-10 w-10 rounded-full border border-[#00a1ff]/45 text-white/90 bg-[#00060a]/70 shadow-[0_6px_18px_rgba(0,6,10,0.5)]"
-                  aria-label={copy.closeImage}
+                  className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#00060a]/70"
+                  aria-label={copy.zoomOut}
                 >
-                  ✕
+                  -
+                </button>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    zoomIn()
+                  }}
+                  className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#00060a]/70"
+                  aria-label={copy.zoomIn}
+                >
+                  +
                 </button>
               </div>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  closeLightbox()
+                }}
+                className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#00060a]/70"
+                aria-label={copy.closeImage}
+              >
+                ✕
+              </button>
             </div>
           </div>
 
