@@ -261,3 +261,26 @@
   - resize-обработчик переведён на rAF-throttle (аналогично mousemove), чтобы уменьшить нагрузку при сериях `resize`.
 - `components/ProjectDetailView.tsx`:
   - локализованный `copy` мемоизирован по `locale` через `useMemo`, чтобы не пересоздавать объект на каждом рендере.
+
+---
+
+## Update 2026-03-05 (шрифты, деплой, безопасность)
+
+### Локальные шрифты Geologica
+- Переход с `next/font/google` на `next/font/local` (`app/layout.tsx`).
+- Файлы: `public/fonts/geologica-latin.woff2`, `geologica-cyrillic.woff2`, `geologica-cyrillic-ext.woff2`.
+- Причина: сборка на VPS зависала на загрузке Google Fonts (сеть/таймаут); локальные шрифты устраняют зависимость от внешнего API при build.
+
+### Деплой (`.github/workflows/deploy-production.yml`)
+- **Удалён `rm -rf .next`** перед сборкой — при падении/таймауте build сервер оставался без `.next`, PM2 входил в crash loop (1008+ рестартов).
+- **Защита `.env*`**: `git clean -fd -e '.env*'` — иначе `git clean -fd` удалял `.env.local` (Sanity, прочие переменные).
+- Логика: `next build` перезаписывает `.next`; при сбое сборки старая рабочая сборка сохраняется.
+
+### Инцидент безопасности (VPS)
+- Обнаружен майнер `/tmp/.16`, rootkit `libprocesshider.so` в `/etc/ld.so.preload`, persistence через cron.
+- Очистка: `kill -9` майнер, `rm -f /tmp/.16`, `echo "" | tee /etc/ld.so.preload`, очистка crontab (`printf '' > /var/spool/cron/crontabs/root`), удаление `/var/tmp/apt.log` и вредоносного `/root/.bash_logout`.
+- Cron-задания запускали майнер каждую минуту и при reboot. Рекомендация: рассмотреть пересоздание VPS и смену паролей.
+
+### Синхронизация main с продом
+- Merge `reserve/local-geologica-fonts` → `main` (коммит `0a255a5`).
+- main = прод: локальные шрифты + исправленный workflow.
