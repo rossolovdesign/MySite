@@ -41,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const slug = project.slug?.current
     if (!slug) return
 
-    const lastModified = project.date ? new Date(project.date) : now
+    const lastModified = now
     projectRoutes.push({
       url: `${siteUrl}/projects/${slug}`,
       lastModified,

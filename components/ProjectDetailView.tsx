@@ -804,6 +804,18 @@ export function ProjectDetailView({
                     </a>
                   </p>
                 )}
+                {project.tags && project.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs px-2.5 py-1 rounded-full bg-[#FF99E5] text-[#00060A] font-light uppercase whitespace-nowrap"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -965,7 +977,7 @@ export function ProjectDetailView({
       {/* Mobile: два отдельных бара — контент сверху, контроллы и инфо снизу */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex flex-col gap-6">
         {/* Бар 1: контент сцены */}
-        <div className="overflow-y-auto scrollbar-hide max-h-[25vh] min-h-0 px-4">
+        <div className="overflow-y-auto scrollbar-hide max-h-[25vh] min-h-0 px-5">
           <p className="text-white font-light text-lg leading-snug">
             {activeScene ? activeScene.title : project.title}
           </p>
@@ -977,7 +989,7 @@ export function ProjectDetailView({
         </div>
         {/* Бар 2: контроллы, название проекта, в составе — упирается в края, без скруглений снизу */}
         <div
-          className="rounded-t-[20px] border-t border-x border-white/30 bg-[#333333] px-4 py-6 flex flex-col gap-3"
+          className="rounded-t-[20px] border-t border-x border-white/30 bg-[#333333] px-5 py-6 flex flex-col gap-3"
           style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}
         >
           <div className="flex items-stretch justify-between gap-3">
@@ -1020,9 +1032,10 @@ export function ProjectDetailView({
               </div>
             )}
           </div>
-          <div className="inline-flex max-w-full items-center gap-4 flex-wrap">
-            <p className="text-white font-light text-sm leading-relaxed truncate">{project.title}</p>
-            {project.collaboration?.url && project.collaboration.title && (
+          <div className="flex flex-col gap-2 min-w-0">
+            <div className="inline-flex max-w-full items-center gap-4 flex-wrap">
+              <p className="text-white font-light text-sm leading-relaxed truncate">{project.title}</p>
+              {project.collaboration?.url && project.collaboration.title && (
               <p className="text-sm leading-relaxed text-white font-light whitespace-nowrap">
                 {copy.collaborationWith}{' '}
                 <a
@@ -1034,6 +1047,19 @@ export function ProjectDetailView({
                   {project.collaboration.title}
                 </a>
               </p>
+            )}
+            </div>
+            {project.tags && project.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2.5 py-1 rounded-full bg-[#FF99E5] text-[#00060A] font-light uppercase whitespace-nowrap"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
         </div>

@@ -16,7 +16,6 @@ export interface Project {
     current: string
   }
   shortDescription?: string
-  date?: string
   tags?: string[]
   thumbnail?: {
     asset: {
@@ -34,12 +33,11 @@ export interface Project {
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    const query = `*[_type == "project"] | order(order desc, date desc) {
+    const query = `*[_type == "project"] | order(order desc) {
       _id,
       title,
       slug,
       shortDescription,
-      date,
       tags,
       "thumbnail": thumbnail {
         asset-> {
@@ -67,12 +65,11 @@ export async function getProjectsByLocale(locale: Locale = 'ru'): Promise<Projec
     const shortDescriptionExpr = locale === 'en' ? 'coalesce(shortDescriptionEn, shortDescription)' : 'shortDescription'
     const tagsExpr = locale === 'en' ? 'coalesce(tagsEn, tags)' : 'tags'
 
-    const query = `*[_type == "project"] | order(order desc, date desc) {
+    const query = `*[_type == "project"] | order(order desc) {
       _id,
       "title": ${titleExpr},
       slug,
       "shortDescription": ${shortDescriptionExpr},
-      date,
       "tags": ${tagsExpr},
       "thumbnail": thumbnail {
         asset-> {
@@ -96,12 +93,11 @@ export async function getProjectsByLocale(locale: Locale = 'ru'): Promise<Projec
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    const query = `*[_type == "project" && slug.current == $slug][0] {
+      const query = `*[_type == "project" && slug.current == $slug][0] {
       _id,
       title,
       slug,
       shortDescription,
-      date,
       tags,
       "thumbnail": thumbnail {
         asset-> {
@@ -142,7 +138,6 @@ export async function getProjectBySlugAndLocale(slug: string, locale: Locale = '
       "title": ${titleExpr},
       slug,
       "shortDescription": ${shortDescriptionExpr},
-      date,
       "tags": ${tagsExpr},
       "thumbnail": thumbnail {
         asset-> {

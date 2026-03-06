@@ -15,7 +15,7 @@ export const ProjectsPageHeader = memo(function ProjectsPageHeader({
   return (
     <div className="fixed bottom-0 left-0 right-0 z-20 flex flex-col md:px-8">
       <div
-        className="rounded-t-[20px] border-t border-x border-white/30 bg-[#333333] px-4 py-6 md:px-5 md:pt-8 md:pb-8 w-full md:max-w-[1400px] md:mx-auto"
+        className="rounded-t-[20px] border-t border-x border-white/30 bg-[#333333] px-5 py-6 md:px-5 md:pt-8 md:pb-8 w-full md:max-w-[1400px] md:mx-auto"
         style={{ paddingBottom: 'max(24px, env(safe-area-inset-bottom))' }}
       >
         <Link

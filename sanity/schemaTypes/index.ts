@@ -41,16 +41,10 @@ export const projectType = defineType({
       description: 'Английский текст карточки проекта (для /en/projects).',
     }),
     defineField({
-      name: 'date',
-      title: 'Date',
-      type: 'datetime',
-      description: 'Дата проекта (отображается на карточке).',
-    }),
-    defineField({
       name: 'order',
       title: 'Порядок',
       type: 'number',
-      description: 'Порядок отображения в списке проектов. Меньше = выше. Например: 1 — первый, 2 — второй. Если не указано — сортировка по дате.',
+      description: 'Порядок отображения в списке проектов. Меньше = выше. Например: 1 — первый, 2 — второй.',
       validation: (rule) => rule.min(0).integer(),
     }),
     defineField({

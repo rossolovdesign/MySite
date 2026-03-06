@@ -24,6 +24,3 @@ export interface SanitySlug {
   current: string
 }
 
-export interface SanityDateTime {
-  date?: string
-}

@@ -27,7 +27,7 @@
 ## Sanity
 
 - Типы: `project`, `scene`. Схемы: `sanity/schemaTypes/index.ts`.
-- **getProjects()**: без `scenes[]` (только список карточек). Поля: _id, title, slug, shortDescription, date, tags, thumbnail.asset->.
+- **getProjects()**: без `scenes[]` (только список карточек). Поля: _id, title, slug, shortDescription, tags, thumbnail.asset->.
 - **getProjectBySlug(slug)**: полный проект с `scenes[]->` (image.asset->, order), сортировка по order.
 - Project: нет поля description, только shortDescription.
 
@@ -572,3 +572,23 @@
 
 ### Анимация `active` на мобилке
 - Убрана у всех интерактивных элементов: главная (TELEGRAM, EMAIL, язык, кнопка «Проекты»), карточки проектов (`md:active:` только на desktop), деталка (ссылки, кнопки навигации), бар «Назад».
+
+---
+
+## Update 2026-03-06 (сессия 5: паддинги мобилки, Sanity, теги деталки)
+
+### Мобилка — паддинги
+- **Проекты:** нижний бар — боковые паддинги 20px (`px-5`).
+- **Деталка:** контент слайда — боковые паддинги 20px (`px-5`).
+- **Деталка:** нижний бар — боковые паддинги 20px (`px-5`).
+
+### Sanity — удалены date и year
+- Поле `date` (datetime) удалено из схемы `project`.
+- Поле `year` добавлено и затем удалено (отказ от отображения года).
+- Сортировка проектов: только `order desc`.
+- Sitemap: `lastModified` — текущая дата (`now`).
+- Удалён интерфейс `SanityDateTime` из `types/sanity.ts`.
+
+### Деталка проекта — теги
+- **Десктоп:** теги под блоком «В составе», отступ сверху 12px (`mt-3`).
+- **Мобилка:** теги под названием проекта и collaboration, отступ сверху 8px (`mt-2`).
