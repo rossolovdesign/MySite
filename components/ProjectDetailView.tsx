@@ -766,7 +766,7 @@ export function ProjectDetailView({
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="text-xs px-2.5 py-1 rounded-full border border-white/30 bg-[#affc41] text-[#00060a] font-normal uppercase whitespace-nowrap"
+                            className="text-xs px-2.5 py-1 rounded-full bg-[#FF99E5] text-[#00060A] font-light uppercase whitespace-nowrap"
                           >
                             {tag}
                           </span>
@@ -777,10 +777,10 @@ export function ProjectDetailView({
                 )}
               </div>
 
-              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-[#00a1ff]/30 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-5 pt-8 pb-8 shadow-[0_12px_36px_rgba(0,20,35,0.45)]">
+              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-white/20 bg-white/10 backdrop-blur-xl px-5 pt-8 pb-8">
                 <Link
                   href={projectsHref}
-                  className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-thin text-lg"
+                  className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-light text-lg"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -796,7 +796,7 @@ export function ProjectDetailView({
                       href={project.collaboration.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 hover:text-white transition-colors"
+                      className="text-[#affc41] font-light underline decoration-[#affc41]/60 underline-offset-2 hover:text-white transition-colors"
                     >
                       {project.collaboration.title}
                     </a>
@@ -864,7 +864,7 @@ export function ProjectDetailView({
           </div>
 
           <div
-            className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] pt-3 bg-gradient-to-t from-[#00060a]/95 via-[#00060a]/65 to-transparent"
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] pt-3 bg-gradient-to-t from-[#4D4D4D]/95 via-[#4D4D4D]/65 to-transparent"
             style={{
               paddingLeft: MOBILE_SAFE_PAD_X_LEFT,
               paddingRight: MOBILE_SAFE_PAD_X_RIGHT,
@@ -881,7 +881,7 @@ export function ProjectDetailView({
                   event.stopPropagation()
                   closeLightbox()
                 }}
-                className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#00060a]/70"
+                className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#333333]/70"
                 aria-label={copy.closeImage}
               >
                 ✕
@@ -962,12 +962,12 @@ export function ProjectDetailView({
 
       {/* Mobile: фиксированная карточка 35% экрана, края в край экрана */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 h-[35vh] flex flex-col">
-        <div className="flex-1 min-h-0 rounded-t-[20px] border border-[#00a1ff]/30 border-b-0 bg-[rgba(0,162,255,0.18)] backdrop-blur-xl px-4 pt-4 pb-0 shadow-[0_12px_36px_rgba(0,20,35,0.45)] overflow-y-auto scrollbar-hide flex flex-col items-stretch">
+        <div className="flex-1 min-h-0 rounded-t-[20px] border border-white/20 border-b-0 bg-white/10 backdrop-blur-xl px-4 pt-4 pb-0 overflow-y-auto scrollbar-hide flex flex-col items-stretch">
           <div className="pb-2 flex-shrink-0">
             <div className="flex items-center justify-between gap-3">
               <Link
                 href={projectsHref}
-                className="inline-flex h-9 items-center gap-1 text-white/80 active:text-[#affc41] transition-colors font-thin text-sm"
+                className="inline-flex h-9 items-center gap-1 text-white/80 active:text-[#affc41] transition-colors font-light text-sm"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -980,7 +980,7 @@ export function ProjectDetailView({
                     type="button"
                     onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
                     disabled={!hasPrevScene}
-                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#4D4D4D]/45 disabled:opacity-35 disabled:cursor-not-allowed"
                     aria-label={copy.prevScene}
                   >
                     <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -994,7 +994,7 @@ export function ProjectDetailView({
                     type="button"
                     onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
                     disabled={!hasNextScene}
-                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#00060a]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#4D4D4D]/45 disabled:opacity-35 disabled:cursor-not-allowed"
                     aria-label={copy.nextScene}
                   >
                     <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1014,7 +1014,7 @@ export function ProjectDetailView({
                     href={project.collaboration.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#affc41] underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
+                    className="text-[#affc41] font-light underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
                   >
                     {project.collaboration.title}
                   </a>

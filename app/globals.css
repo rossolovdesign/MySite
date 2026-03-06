@@ -4,11 +4,11 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #00060a;
+  --background: #4D4D4D;
   --foreground: #ffffff;
   --accent: #affc41;
-  --accent-dark: #00a1ff;
-  --border-color: #003d5c;
+  --accent-tag: #ff99e5;
+  --border-color: rgba(255,255,255,0.15);
   --radius: 0.625rem;
 }
 
@@ -19,7 +19,7 @@
 
 @layer base {
   body {
-    @apply bg-[#00060a] text-white;
+    @apply bg-[#4D4D4D] text-white;
     overflow: hidden;
     /* Фон задаётся только в SiteBackground — единый источник для всех страниц */
   }
@@ -35,7 +35,7 @@
     background-image: 
       linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 95.24px 95.24px;
+    background-size: 60px 60px;
   }
 
   .leading-custom {
@@ -56,20 +56,16 @@
     @apply text-[#affc41];
   }
 
-  .accent-blue {
-    @apply text-[#00a1ff];
-  }
-
-  .border-blue {
-    @apply border border-[#003d5c];
+  .accent-tag {
+    @apply text-[#ff99e5];
   }
 
   .btn-green {
-    @apply px-4 py-2 rounded-full border border-[#affc41] text-[#affc41] font-medium hover:bg-[#affc41] hover:text-[#00060a] transition;
+    @apply px-4 py-2 rounded-full border border-[#affc41] text-[#affc41] font-light hover:bg-[#affc41] hover:text-[#00060a] transition;
   }
 
   .btn-green-solid {
-    @apply px-6 py-3 rounded-full bg-[#affc41] text-[#00060a] font-medium hover:opacity-90 transition;
+    @apply px-6 py-3 rounded-full bg-[#affc41] text-[#00060a] font-light hover:opacity-90 transition;
   }
 }
 
@@ -176,11 +172,9 @@
   width: 30px;
   height: 30px;
   border-radius: 9999px;
-  border: 1px solid rgba(0, 161, 255, 0.65);
-  background: rgba(0, 161, 255, 0.16);
-  box-shadow:
-    0 0 0 1px rgba(175, 252, 65, 0.2) inset,
-    0 8px 24px rgba(0, 32, 51, 0.35);
+  border: 1px solid rgba(175, 252, 65, 0.65);
+  background: rgba(175, 252, 65, 0.16);
+  box-shadow: 0 0 0 1px rgba(175, 252, 65, 0.2) inset;
   backdrop-filter: blur(6px);
 }
 

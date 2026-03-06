@@ -58,11 +58,11 @@ export default async function ProjectsPage() {
                         key={project._id}
                         href={`/projects/${project.slug.current}`}
                         prefetch={false}
-                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[20px] overflow-hidden hover:bg-[#affc41]/10 hover:border-[#affc41] active:bg-[#affc41]/10 active:border-[#affc41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] active:scale-[1.04]"
+                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[20px] overflow-hidden hover:bg-[#AFFC41] hover:border-[#AFFC41] active:bg-[#AFFC41] active:border-[#AFFC41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] active:scale-[1.04]"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         {/* 1. Картинка */}
-                        <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-[#003d5c] to-[#00060a] flex-shrink-0">
+                        <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-[#5a5a5a] to-[#4D4D4D] group-hover:from-[#AFFC41] group-hover:to-[#AFFC41] transition-colors flex-shrink-0">
                           <ProjectCardImage
                             imageUrl={imageUrl}
                             alt={project.title}
@@ -72,9 +72,9 @@ export default async function ProjectsPage() {
 
                         {/* 2. Краткое описание и 3. Бейджи */}
                         <div className="p-5 flex flex-col flex-1 gap-3">
-                          <h3 className="text-white font-thin text-xl leading-custom">{project.title}</h3>
+                          <h3 className="text-white font-thin text-xl leading-custom group-hover:text-[#00060A] transition-colors">{project.title}</h3>
                           {project.shortDescription && (
-                            <p className="text-white/60 font-thin text-sm leading-snug line-clamp-2 flex-1">
+                            <p className="text-white/60 font-thin text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">
                               {project.shortDescription}
                             </p>
                           )}
@@ -83,7 +83,7 @@ export default async function ProjectsPage() {
                               {project.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="text-xs px-2.5 py-1 rounded-full border border-white/30 bg-[#affc41] text-[#00060a] font-normal uppercase whitespace-nowrap"
+                                  className="text-xs px-2.5 py-1 rounded-full bg-[#FF99E5] text-[#00060A] font-light uppercase whitespace-nowrap group-hover:bg-[#00060A] group-hover:text-[#AFFC41] transition-colors"
                                 >
                                   {tag}
                                 </span>

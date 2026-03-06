@@ -76,12 +76,12 @@ export function Scene3D() {
       directionalLight.position.set(5, 10, 7)
       scene.add(directionalLight)
 
-      const pointLight = new THREE.PointLight(0x00a1ff, 0.5)
+      const pointLight = new THREE.PointLight(0xAFFC41, 0.5)
       pointLight.position.set(-5, -5, 5)
       scene.add(pointLight)
 
       // Подсветка снизу
-      const bottomLight = new THREE.PointLight(0xa8d4ff, 1.2)
+      const bottomLight = new THREE.PointLight(0xAFFC41, 0.8)
       bottomLight.position.set(0, -2, 0.5)
       scene.add(bottomLight)
 
