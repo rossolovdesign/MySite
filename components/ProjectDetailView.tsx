@@ -11,6 +11,8 @@ const IMAGE_ROUNDING_PX = 32
 
 const SECTION_GAP_PX = 32
 const SECTION_PEEK_PX = 32
+/** Активная карточка всегда на этой высоте от верхней границы экрана (px). */
+const ACTIVE_CARD_OFFSET_PX = 120
 /**
  * Для центральной карточки должны одновременно выполняться:
  * - между карточками gap = 32px
@@ -344,23 +346,13 @@ export function ProjectDetailView({
     const el = sectionRefs.current[index]
     if (el && leftRef.current) {
       const rootEl = leftRef.current
-      const block: ScrollLogicalPosition =
-        !isDesktopLayout ? 'start' : index === 0 ? 'start' : index === preparedScenes.length - 1 ? 'end' : 'center'
       const rootRect = rootEl.getBoundingClientRect()
       const sectionRect = el.getBoundingClientRect()
       const currentScrollTop = rootEl.scrollTop
       const maxScrollTop = rootEl.scrollHeight - rootEl.clientHeight
 
-      let delta = 0
-      if (block === 'start') {
-        delta = sectionRect.top - rootRect.top
-      } else if (block === 'end') {
-        delta = sectionRect.bottom - rootRect.bottom
-      } else {
-        const sectionCenter = sectionRect.top + sectionRect.height / 2
-        const rootCenter = rootRect.top + rootRect.height / 2
-        delta = sectionCenter - rootCenter
-      }
+      // Все карточки: верх на ACTIVE_CARD_OFFSET_PX от верха экрана
+      const delta = sectionRect.top - ACTIVE_CARD_OFFSET_PX
       const targetScrollTop = clamp(currentScrollTop + delta, 0, maxScrollTop)
 
       if (behavior === 'auto') {
@@ -399,7 +391,7 @@ export function ProjectDetailView({
 
       scrollAnimationRef.current = requestAnimationFrame(step)
     }
-  }, [preparedScenes.length, isDesktopLayout, cancelScrollAnimation])
+  }, [cancelScrollAnimation])
 
   const goToSection = useCallback((index: number) => {
     const safeIndex = Math.max(0, Math.min(index, preparedScenes.length - 1))
@@ -551,10 +543,16 @@ export function ProjectDetailView({
     }
   }, [canPanLightbox])
 
-  // Начальное положение скролла полностью вверху (scrollTop = 0).
+  // Начальное положение: активная карточка на 120px от верха экрана.
   useEffect(() => {
-    if (leftRef.current) leftRef.current.scrollTop = 0
-  }, [])
+    if (leftRef.current && preparedScenes.length > 0 && isDesktopLayout) {
+      const t = requestAnimationFrame(() => {
+        scrollToSection(0, 'auto')
+      })
+      return () => cancelAnimationFrame(t)
+    }
+    if (leftRef.current && !isDesktopLayout) leftRef.current.scrollTop = 0
+  }, [isDesktopLayout, preparedScenes.length, scrollToSection])
 
   useEffect(() => {
     return () => {
@@ -602,16 +600,13 @@ export function ProjectDetailView({
 
     const snapToNearest = () => {
       if (!leftRef.current || !sectionRefs.current.length) return
-      const rootRect = leftRef.current.getBoundingClientRect()
-      const rootCenter = rootRect.top + rootRect.height / 2
       let nearestIndex = 0
       let nearestDistance = Number.POSITIVE_INFINITY
 
       sectionRefs.current.slice(0, preparedScenes.length).forEach((sectionEl, index) => {
         if (!sectionEl) return
         const rect = sectionEl.getBoundingClientRect()
-        const sectionCenter = rect.top + rect.height / 2
-        const distance = Math.abs(sectionCenter - rootCenter)
+        const distance = Math.abs(rect.top - ACTIVE_CARD_OFFSET_PX)
 
         if (distance < nearestDistance) {
           nearestDistance = distance
@@ -706,11 +701,18 @@ export function ProjectDetailView({
                   </div>
                 </div>
 
-                {/* Desktop: скролл с секциями */}
+                {/* Desktop: скролл с секциями. Padding создаёт пустое пространство сверху/снизу для первой/последней карточки. */}
                 <div
                   ref={leftRef}
                   className="hidden lg:block scrollbar-hide flex-1 min-h-0 overflow-y-auto overflow-x-hidden pl-[max(32px,env(safe-area-inset-left))] pr-0 pt-0 pb-0"
                 >
+                  <div
+                    className="min-h-full flex flex-col"
+                    style={{
+                      paddingTop: ACTIVE_CARD_OFFSET_PX,
+                      paddingBottom: `max(${ACTIVE_CARD_OFFSET_PX}px, calc(100vh - ${ACTIVE_CARD_OFFSET_PX}px))`,
+                    }}
+                  >
                   {preparedScenes.map((scene, i) => {
                     const isActive = activeIndex === i
                     const isFirst = i === 0
@@ -723,7 +725,7 @@ export function ProjectDetailView({
                         }}
                         className="relative w-full flex-shrink-0 flex items-center justify-center box-border min-h-0 h-auto cursor-pointer"
                         style={{
-                          marginTop: isFirst ? SECTION_GAP_PX : 0,
+                          marginTop: isFirst ? 0 : SECTION_GAP_PX,
                           marginBottom: isLast ? SECTION_GAP_PX : SECTION_GAP_PX,
                         }}
                         onClick={() => goToSection(i)}
@@ -742,6 +744,7 @@ export function ProjectDetailView({
                       </section>
                     )
                   })}
+                  </div>
                 </div>
               </div>
             </div>
