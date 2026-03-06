@@ -243,13 +243,13 @@ export function Scene3D() {
     <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden relative">
       <div
         ref={loadingRef}
-        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20 text-white/80 text-sm font-light"
+        className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20 text-white text-sm font-light"
       >
         Загрузка 3D
       </div>
       <div
         ref={overlayRef}
-        className="pointer-events-none absolute inset-0 hidden items-center justify-center bg-black/30 text-white/70 text-sm font-light text-center px-4"
+        className="pointer-events-none absolute inset-0 hidden items-center justify-center bg-black/30 text-white text-sm font-light text-center px-4"
       >
         Ошибка загрузки 3D. Перезагрузите страницу
       </div>

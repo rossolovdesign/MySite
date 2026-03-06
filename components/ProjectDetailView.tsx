@@ -780,16 +780,16 @@ export function ProjectDetailView({
               <div className="flex-shrink-0 mt-8 rounded-[20px] border border-white/30 bg-[#333333] px-5 pt-8 pb-8">
                 <Link
                   href={projectsHref}
-                  className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-light text-lg"
+                  className="inline-flex items-center gap-1 text-[#AFFC41] hover:text-[#affc41]/90 transition-colors font-light text-lg"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                   {copy.toProjects}
                 </Link>
-                <h1 className="text-white/95 font-light text-xl leading-snug mt-3">{project.title}</h1>
+                <h1 className="text-white font-light text-xl leading-snug mt-3">{project.title}</h1>
                 {project.collaboration?.url && project.collaboration.title && (
-                  <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-light">
+                  <p className="mt-[2px] text-sm leading-relaxed text-white font-light">
                     {copy.collaborationWith}{' '}
                     <a
                       href={project.collaboration.url}
@@ -880,7 +880,7 @@ export function ProjectDetailView({
                   event.stopPropagation()
                   closeLightbox()
                 }}
-                className="h-10 w-10 rounded-full border border-white/60 text-white/90 bg-[#333333]/70"
+                className="h-10 w-10 rounded-full border border-white/60 text-white bg-[#333333]/70"
                 aria-label={copy.closeImage}
               >
                 ✕
@@ -967,17 +967,17 @@ export function ProjectDetailView({
             {activeScene ? activeScene.title : project.title}
           </p>
           {activeScene?.description && (
-            <p className="text-white/75 font-light text-sm leading-relaxed mt-[2px]">
+            <p className="text-white font-light text-sm leading-relaxed mt-[2px]">
               {activeScene.description}
             </p>
           )}
         </div>
         {/* Бар 2: контроллы, название проекта, в составе */}
         <div className="rounded-[20px] border border-white/30 bg-[#333333] px-4 py-6 flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-stretch justify-between gap-3">
             <Link
               href={projectsHref}
-              className="inline-flex h-9 items-center gap-1 text-white/80 active:text-[#affc41] transition-colors font-light text-sm"
+              className="inline-flex h-full self-stretch items-center gap-1 text-[#AFFC41] active:text-[#affc41]/90 transition-colors font-light text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -990,21 +990,21 @@ export function ProjectDetailView({
                   type="button"
                   onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
                   disabled={!hasPrevScene}
-                  className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#333333]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                  className="h-8 w-8 rounded-full bg-white/30 text-white hover:bg-white/50 active:bg-white/50 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
                   aria-label={copy.prevScene}
                 >
                   <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <span className="min-w-[2.5rem] text-center text-sm font-light text-white/70 tabular-nums">
+                <span className="min-w-[2.5rem] text-center text-sm font-light text-white tabular-nums">
                   {activeIndex + 1} / {preparedScenes.length}
                 </span>
                 <button
                   type="button"
                   onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
                   disabled={!hasNextScene}
-                  className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#333333]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                  className="h-8 w-8 rounded-full bg-white/30 text-white hover:bg-white/50 active:bg-white/50 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
                   aria-label={copy.nextScene}
                 >
                   <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1015,9 +1015,9 @@ export function ProjectDetailView({
             )}
           </div>
           <div className="inline-flex max-w-full items-center gap-4 flex-wrap">
-            <p className="text-white/90 font-light text-sm leading-relaxed truncate">{project.title}</p>
+            <p className="text-white font-light text-sm leading-relaxed truncate">{project.title}</p>
             {project.collaboration?.url && project.collaboration.title && (
-              <p className="text-sm leading-relaxed text-white/75 font-light whitespace-nowrap">
+              <p className="text-sm leading-relaxed text-white font-light whitespace-nowrap">
                 {copy.collaborationWith}{' '}
                 <a
                   href={project.collaboration.url}

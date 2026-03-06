@@ -43,7 +43,7 @@ export default async function ProjectsPage() {
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                 {projects.length === 0 ? (
                   <div className="md:col-span-2 xl:col-span-3 rounded-2xl bg-white/5 backdrop-blur-sm p-8">
-                    <p className="text-white/70 font-light text-lg">
+                    <p className="text-white font-light text-lg">
                       Проекты пока не добавлены. Откройте <span className="text-white font-light">/studio</span> и создайте первый проект в Sanity.
                     </p>
                   </div>
@@ -74,7 +74,7 @@ export default async function ProjectsPage() {
                         <div className="p-5 flex flex-col flex-1 gap-3">
                           <h3 className="text-white font-light text-xl leading-custom group-hover:text-[#00060A] transition-colors">{project.title}</h3>
                           {project.shortDescription && (
-                            <p className="text-white/70 font-light text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">
+                            <p className="text-white font-light text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">
                               {project.shortDescription}
                             </p>
                           )}

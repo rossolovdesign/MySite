@@ -111,7 +111,7 @@ export default function Home() {
         className="hidden md:flex absolute left-8 lg:left-12 bottom-8 lg:bottom-12 items-center gap-3 px-10 py-6 rounded-2xl cursor-pointer transition-all duration-300 group z-20 animate-in fade-in w-[500px] h-[104px] bg-[#AFFC41] hover:opacity-90 hover:scale-110 overflow-hidden"
       >
         <span className="font-light text-[#00060A] text-2xl relative z-10">Проекты</span>
-        <div className="ml-auto inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#00060A] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 relative z-10">
+        <div className="ml-auto inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#00060A]/70 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 relative z-10">
           <svg
             className="w-5 h-5 text-white"
             viewBox="0 0 24 24"
@@ -131,7 +131,7 @@ export default function Home() {
         </span>
         <Link
           href="/en"
-          className="inline-flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-transparent text-white/85 hover:text-[#00060A] hover:bg-[#AFFC41] hover:border-[#AFFC41] transition-all duration-300 hover:scale-110 font-light text-2xl"
+          className="inline-flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-transparent text-white hover:text-[#00060A] hover:bg-[#AFFC41] hover:border-[#AFFC41] transition-all duration-300 hover:scale-110 font-light text-2xl"
         >
           ENG
         </Link>
@@ -224,7 +224,7 @@ export default function Home() {
             </span>
             <Link
               href="/en"
-              className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-transparent text-white/85 hover:text-[#00060A] hover:bg-[#AFFC41] hover:border-[#AFFC41] active:text-[#00060A] active:bg-[#AFFC41] active:border-[#AFFC41] active:scale-110 transition-all duration-300 font-light text-lg"
+              className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-transparent text-white hover:text-[#00060A] hover:bg-[#AFFC41] hover:border-[#AFFC41] active:text-[#00060A] active:bg-[#AFFC41] active:border-[#AFFC41] active:scale-110 transition-all duration-300 font-light text-lg"
             >
               ENG
             </Link>
@@ -238,7 +238,7 @@ export default function Home() {
         className="md:hidden fixed bottom-7 left-7 right-7 max-[740px]:bottom-4 max-[740px]:left-5 max-[740px]:right-5 z-30 px-9 max-[740px]:px-8 py-5 max-[740px]:py-4 rounded-2xl cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[#AFFC41] hover:opacity-90 active:opacity-90 hover:scale-110 active:scale-110 overflow-hidden"
       >
         <span className="font-light text-[#00060A] relative z-10" style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}>Проекты</span>
-        <div className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#00060A] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1 relative z-10">
+        <div className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#00060A]/70 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1 relative z-10">
           <svg
             className="w-4 h-4 text-white"
             viewBox="0 0 24 24"

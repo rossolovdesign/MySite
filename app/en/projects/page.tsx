@@ -42,7 +42,7 @@ export default async function ProjectsPageEn() {
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                 {projects.length === 0 ? (
                   <div className="md:col-span-2 xl:col-span-3 rounded-2xl bg-white/5 backdrop-blur-sm p-8">
-                    <p className="text-white/70 font-light text-lg">No projects yet. Open <span className="text-white font-light">/studio</span> and publish your first project in Sanity.</p>
+                    <p className="text-white font-light text-lg">No projects yet. Open <span className="text-white font-light">/studio</span> and publish your first project in Sanity.</p>
                   </div>
                 ) : (
                   projects.map((project, index) => {
@@ -63,7 +63,7 @@ export default async function ProjectsPageEn() {
                         <div className="p-5 flex flex-col flex-1 gap-3">
                           <h3 className="text-white font-light text-xl leading-custom group-hover:text-[#00060A] transition-colors">{project.title}</h3>
                           {project.shortDescription && (
-                            <p className="text-white/70 font-light text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">{project.shortDescription}</p>
+                            <p className="text-white font-light text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">{project.shortDescription}</p>
                           )}
                           {project.tags && project.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-2">

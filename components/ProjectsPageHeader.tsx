@@ -42,7 +42,7 @@ export const ProjectsPageHeader = memo(function ProjectsPageHeader({
       <div className="relative z-10 max-w-7xl mx-auto">
         <Link
           href={href}
-          className="inline-flex h-9 lg:h-auto items-center gap-1 text-white/80 hover:text-[#affc41] active:text-[#affc41] transition-colors font-light text-sm lg:text-lg"
+          className="inline-flex h-9 lg:h-auto items-center gap-1 text-[#AFFC41] hover:text-[#affc41]/90 active:text-[#affc41]/90 transition-colors font-light text-sm lg:text-lg"
         >
           <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
