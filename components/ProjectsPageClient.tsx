@@ -18,11 +18,14 @@ export function ProjectsPageClient({ children, backHref = '/', backLabel = 'На
         ref={scrollRef}
         className="w-full h-full overflow-x-hidden overflow-y-auto scrollbar-hide"
       >
-        <div className="relative z-10 w-full flex flex-col min-h-full">
-          <ProjectsPageHeader scrollContainerRef={scrollRef} href={backHref} label={backLabel} />
+        <div
+          className="relative z-10 w-full flex flex-col min-h-full"
+          style={{ paddingBottom: 'max(104px, calc(104px + env(safe-area-inset-bottom)))' }}
+        >
           {children}
         </div>
       </div>
+      <ProjectsPageHeader href={backHref} label={backLabel} />
     </main>
   )
 }

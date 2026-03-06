@@ -38,8 +38,8 @@ export default async function ProjectsPage() {
     <ProjectsPageClient>
       {/* Projects Grid */}
       <div className="flex-1 w-full">
-          <div className="w-full px-4 pt-4 pb-6 md:py-16">
-            <div className="max-w-7xl mx-auto">
+          <div className="w-full px-7 max-[740px]:px-5 md:px-8 pt-8 pb-6 md:py-16">
+            <div className="w-full max-w-[1400px] mx-auto">
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                 {projects.length === 0 ? (
                   <div className="md:col-span-2 xl:col-span-3 rounded-2xl bg-white/5 backdrop-blur-sm p-8">
@@ -58,7 +58,7 @@ export default async function ProjectsPage() {
                         key={project._id}
                         href={`/projects/${project.slug.current}`}
                         prefetch={false}
-                        className="group relative bg-[#333333] border border-white/30 rounded-[20px] overflow-hidden hover:bg-[#AFFC41] hover:border-[#AFFC41] active:bg-[#AFFC41] active:border-[#AFFC41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] active:scale-[1.04]"
+                        className="group relative bg-[#333333] border border-white/30 rounded-[20px] overflow-hidden hover:bg-[#AFFC41] hover:border-[#AFFC41] md:active:bg-[#AFFC41] md:active:border-[#AFFC41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] md:active:scale-[1.04]"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         {/* 1. Картинка */}

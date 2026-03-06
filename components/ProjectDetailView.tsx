@@ -749,8 +749,8 @@ export function ProjectDetailView({
               </div>
             </div>
 
-            {/* Right: контент сверху, карточка с кнопкой и заголовком внизу */}
-            <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(120px,env(safe-area-inset-top))] pl-8 pr-8 pb-[48px] overflow-hidden">
+            {/* Right: контент сверху, карточка с кнопкой и заголовком прижата к низу */}
+            <div className="hidden lg:flex flex-shrink-0 w-full max-w-md flex-col pt-[max(120px,env(safe-area-inset-top))] pl-8 pr-8 overflow-hidden">
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
                 {activeScene ? (
                   <div className="space-y-4">
@@ -777,7 +777,10 @@ export function ProjectDetailView({
                 )}
               </div>
 
-              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-white/30 bg-[#333333] px-5 pt-8 pb-8">
+              <div
+                className="flex-shrink-0 mt-8 rounded-t-[20px] border-t border-x border-white/30 bg-[#333333] px-5 pt-6"
+                style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}
+              >
                 <Link
                   href={projectsHref}
                   className="inline-flex items-center gap-1 text-[#AFFC41] hover:text-[#affc41]/90 transition-colors font-light text-lg"
@@ -960,9 +963,9 @@ export function ProjectDetailView({
       )}
 
       {/* Mobile: два отдельных бара — контент сверху, контроллы и инфо снизу */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex flex-col gap-4 px-4 pb-4" style={{ paddingBottom: `max(16px, env(safe-area-inset-bottom))` }}>
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex flex-col gap-6">
         {/* Бар 1: контент сцены */}
-        <div className="rounded-[20px] px-4 py-6 overflow-y-auto scrollbar-hide max-h-[25vh] min-h-0">
+        <div className="overflow-y-auto scrollbar-hide max-h-[25vh] min-h-0 px-4">
           <p className="text-white font-light text-lg leading-snug">
             {activeScene ? activeScene.title : project.title}
           </p>
@@ -972,12 +975,15 @@ export function ProjectDetailView({
             </p>
           )}
         </div>
-        {/* Бар 2: контроллы, название проекта, в составе */}
-        <div className="rounded-[20px] border border-white/30 bg-[#333333] px-4 py-6 flex flex-col gap-3">
+        {/* Бар 2: контроллы, название проекта, в составе — упирается в края, без скруглений снизу */}
+        <div
+          className="rounded-t-[20px] border-t border-x border-white/30 bg-[#333333] px-4 py-6 flex flex-col gap-3"
+          style={{ paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}
+        >
           <div className="flex items-stretch justify-between gap-3">
             <Link
               href={projectsHref}
-              className="inline-flex h-full self-stretch items-center gap-1 text-[#AFFC41] active:text-[#affc41]/90 transition-colors font-light text-sm"
+              className="inline-flex h-full self-stretch items-center gap-1 text-[#AFFC41] transition-colors font-light text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -990,7 +996,7 @@ export function ProjectDetailView({
                   type="button"
                   onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
                   disabled={!hasPrevScene}
-                  className="h-8 w-8 rounded-full bg-white/30 text-white hover:bg-white/50 active:bg-white/50 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
+                  className="h-8 w-8 rounded-full bg-white/30 text-white hover:bg-white/50 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
                   aria-label={copy.prevScene}
                 >
                   <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1004,7 +1010,7 @@ export function ProjectDetailView({
                   type="button"
                   onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
                   disabled={!hasNextScene}
-                  className="h-8 w-8 rounded-full bg-white/30 text-white hover:bg-white/50 active:bg-white/50 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
+                  className="h-8 w-8 rounded-full bg-white/30 text-white hover:bg-white/50 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
                   aria-label={copy.nextScene}
                 >
                   <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1023,7 +1029,7 @@ export function ProjectDetailView({
                   href={project.collaboration.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#affc41] font-light underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
+                  className="text-[#affc41] font-light underline decoration-[#affc41]/60 underline-offset-2 transition-colors"
                 >
                   {project.collaboration.title}
                 </a>
