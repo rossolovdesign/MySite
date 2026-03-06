@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #4D4D4D;
+  --background: #333333;
   --foreground: #ffffff;
   --accent: #affc41;
   --accent-tag: #ff99e5;
@@ -19,7 +19,7 @@
 
 @layer base {
   body {
-    @apply bg-[#4D4D4D] text-white;
+    @apply bg-[#333333] text-white font-light;
     overflow: hidden;
     /* Фон задаётся только в SiteBackground — единый источник для всех страниц */
   }

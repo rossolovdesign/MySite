@@ -43,9 +43,9 @@ export default function HomeEn() {
             </div>
 
             <div className="space-y-0 leading-custom">
-              <p className="font-thin text-white text-2xl">Designing since 2019</p>
-              <p className="font-thin text-white text-2xl">30+ projects</p>
-              <p className="font-thin text-white text-2xl">5 large-scale projects</p>
+              <p className="font-light text-white text-2xl">Designing since 2019</p>
+              <p className="font-light text-white text-2xl">30+ projects</p>
+              <p className="font-light text-white text-2xl">5 large-scale projects</p>
             </div>
           </div>
 
@@ -60,14 +60,14 @@ export default function HomeEn() {
           </div>
 
           <div className="flex flex-col items-end gap-12 flex-shrink-0 animate-in fade-in duration-700" style={{ maxWidth: '280px', textAlign: 'right' }}>
-            <p className="font-thin text-white text-2xl text-right leading-custom">
+            <p className="font-light text-white text-2xl text-right leading-custom">
               Here I share work
               <br />
               I am proud of
             </p>
 
             <div className="flex flex-col items-end gap-4 animate-in fade-in duration-700 delay-200">
-              <p className="font-thin text-white text-2xl text-right leading-custom">
+              <p className="font-light text-white text-2xl text-right leading-custom">
                 Reach out to me
                 <br />
                 right here
@@ -103,7 +103,7 @@ export default function HomeEn() {
 
       <Link
         href="/en/projects"
-        className="hidden md:flex absolute left-8 lg:left-12 bottom-8 lg:bottom-12 items-center gap-3 px-7 py-6 rounded-2xl cursor-pointer transition-all duration-300 group z-20 animate-in fade-in w-[500px] h-[104px] bg-[#AFFC41] hover:opacity-90 hover:scale-110 overflow-hidden"
+        className="hidden md:flex absolute left-8 lg:left-12 bottom-8 lg:bottom-12 items-center gap-3 px-10 py-6 rounded-2xl cursor-pointer transition-all duration-300 group z-20 animate-in fade-in w-[500px] h-[104px] bg-[#AFFC41] hover:opacity-90 hover:scale-110 overflow-hidden"
       >
         <span className="font-light text-[#00060A] text-2xl relative z-10">Projects</span>
         <div className="ml-auto inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#00060A] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 relative z-10">
@@ -155,14 +155,14 @@ export default function HomeEn() {
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight text-base">Designing since 2019</p>
-            <p className="font-thin text-white leading-tight text-base">30+ projects</p>
-            <p className="font-thin text-white leading-tight text-base">5 large-scale projects</p>
+            <p className="font-light text-white leading-tight text-base">Designing since 2019</p>
+            <p className="font-light text-white leading-tight text-base">30+ projects</p>
+            <p className="font-light text-white leading-tight text-base">5 large-scale projects</p>
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight text-base">Here I share work I am proud of</p>
-            <p className="font-thin text-white leading-tight text-base">Reach out to me right here</p>
+            <p className="font-light text-white leading-tight text-base">Here I share work I am proud of</p>
+            <p className="font-light text-white leading-tight text-base">Reach out to me right here</p>
           </div>
 
           <div className="flex gap-2 justify-start flex-wrap pt-0.5">
@@ -170,17 +170,35 @@ export default function HomeEn() {
               href="https://t.me/RossolovDesign"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-full bg-[#AFFC41] text-[#00060A] font-light hover:opacity-90 active:opacity-90 transition-all"
+              className="px-4 py-2 rounded-full border border-[#affc41] text-[#affc41] font-light transition-all duration-300 inline-flex items-center gap-2 hover:bg-[#affc41] hover:text-[#00060a] active:bg-[#affc41] active:text-[#00060a] group"
               style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}
             >
               TELEGRAM
+              <svg
+                className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M7 17L17 7M17 7H7m10 0V17" />
+              </svg>
             </a>
             <a
               href="mailto:rossolovdesign@gmail.com"
-              className="px-3 py-1.5 rounded-full bg-[#AFFC41] text-[#00060A] font-light hover:opacity-90 active:opacity-90 transition-all"
+              className="px-4 py-2 rounded-full border border-[#affc41] text-[#affc41] font-light transition-all duration-300 inline-flex items-center gap-2 hover:bg-[#affc41] hover:text-[#00060a] active:bg-[#affc41] active:text-[#00060a] group"
               style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}
             >
               EMAIL
+              <svg
+                className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M7 17L17 7M17 7H7m10 0V17" />
+              </svg>
             </a>
           </div>
 
@@ -200,9 +218,9 @@ export default function HomeEn() {
 
       <Link
         href="/en/projects"
-        className="md:hidden fixed bottom-7 left-7 right-7 max-[740px]:bottom-4 max-[740px]:left-5 max-[740px]:right-5 z-30 px-6 max-[740px]:px-5 py-4 max-[740px]:py-3 rounded-2xl cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[#AFFC41] hover:opacity-90 active:opacity-90 hover:scale-110 active:scale-110 overflow-hidden"
+        className="md:hidden fixed bottom-7 left-7 right-7 max-[740px]:bottom-4 max-[740px]:left-5 max-[740px]:right-5 z-30 px-9 max-[740px]:px-8 py-5 max-[740px]:py-4 rounded-2xl cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[#AFFC41] hover:opacity-90 active:opacity-90 hover:scale-110 active:scale-110 overflow-hidden"
       >
-        <span className="font-light text-[#00060A] text-lg max-[740px]:text-base relative z-10">Projects</span>
+        <span className="font-light text-[#00060A] relative z-10" style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}>Projects</span>
         <div className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#00060A] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1 relative z-10">
           <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M5 12h14M12 5l7 7-7 7" />

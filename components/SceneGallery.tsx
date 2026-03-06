@@ -43,7 +43,7 @@ export function SceneGallery({ scenes, activeSceneId, onSceneChange }: SceneGall
               />
             )}
           </div>
-          <h4 className="mt-2 font-medium text-neutral-900">{scene.title}</h4>
+          <h4 className="mt-2 font-light text-neutral-900">{scene.title}</h4>
           {scene.description && (
             <p className="text-sm text-neutral-600 line-clamp-2">{scene.description}</p>
           )}

@@ -31,7 +31,7 @@ export const ProjectsPageHeader = memo(function ProjectsPageHeader({
   }, [scrollContainerRef])
 
   return (
-    <div className="sticky top-0 z-20 pt-[calc(2rem+env(safe-area-inset-top))] px-4 pb-2 flex-shrink-0 relative">
+    <div className="sticky top-0 z-20 pt-[calc(1rem+env(safe-area-inset-top))] px-4 pb-4 flex-shrink-0 relative">
       {/* Стеклянный бар — плавное появление/исчезновение, тёмный оттенок чтобы не было белой полосы */}
       <div
         className={`absolute inset-0 bg-white/5 backdrop-blur-md border-b border-white/5 transition-opacity duration-300 ${

@@ -40,7 +40,7 @@ export function SceneInfo({ scene, scenes, onNavigate }: SceneInfoProps) {
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-2xl font-bold text-neutral-900">{scene.title}</h2>
+          <h2 className="text-2xl font-light text-neutral-900">{scene.title}</h2>
           {scene.description && (
             <p className="mt-2 text-neutral-600">{scene.description}</p>
           )}

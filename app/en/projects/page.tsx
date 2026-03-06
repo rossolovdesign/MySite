@@ -41,8 +41,8 @@ export default async function ProjectsPageEn() {
             <div className="max-w-7xl mx-auto">
               <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                 {projects.length === 0 ? (
-                  <div className="md:col-span-2 xl:col-span-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8">
-                    <p className="text-white/70 font-thin text-lg">No projects yet. Open <span className="text-white font-thin">/studio</span> and publish your first project in Sanity.</p>
+                  <div className="md:col-span-2 xl:col-span-3 rounded-2xl bg-white/5 backdrop-blur-sm p-8">
+                    <p className="text-white/70 font-light text-lg">No projects yet. Open <span className="text-white font-light">/studio</span> and publish your first project in Sanity.</p>
                   </div>
                 ) : (
                   projects.map((project, index) => {
@@ -53,17 +53,17 @@ export default async function ProjectsPageEn() {
                         key={project._id}
                         href={`/en/projects/${project.slug.current}`}
                         prefetch={false}
-                        className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-[#AFFC41] hover:border-[#AFFC41] active:bg-[#AFFC41] active:border-[#AFFC41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] active:scale-[1.04]"
+                        className="group relative bg-[#333333] border border-white/30 rounded-2xl overflow-hidden hover:bg-[#AFFC41] hover:border-[#AFFC41] active:bg-[#AFFC41] active:border-[#AFFC41] transition-all duration-300 animate-in fade-in flex flex-col h-full hover:scale-[1.04] active:scale-[1.04]"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
-                        <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-[#5a5a5a] to-[#4D4D4D] group-hover:from-[#AFFC41] group-hover:to-[#AFFC41] transition-colors flex-shrink-0">
+                        <div className="relative w-full h-56 overflow-hidden bg-gradient-to-br from-[#5a5a5a] to-[#333333] group-hover:from-[#AFFC41] group-hover:to-[#AFFC41] transition-colors flex-shrink-0">
                           <ProjectCardImage imageUrl={imageUrl} alt={project.title} priority={index === 0} />
                         </div>
 
                         <div className="p-5 flex flex-col flex-1 gap-3">
-                          <h3 className="text-white font-thin text-xl leading-custom group-hover:text-[#00060A] transition-colors">{project.title}</h3>
+                          <h3 className="text-white font-light text-xl leading-custom group-hover:text-[#00060A] transition-colors">{project.title}</h3>
                           {project.shortDescription && (
-                            <p className="text-white/60 font-thin text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">{project.shortDescription}</p>
+                            <p className="text-white/70 font-light text-sm leading-snug line-clamp-2 flex-1 group-hover:text-[#00060A] transition-colors">{project.shortDescription}</p>
                           )}
                           {project.tags && project.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-2">

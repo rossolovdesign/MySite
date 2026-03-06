@@ -35,9 +35,9 @@ export default function Home() {
             </div>
 
             <div className="space-y-0 leading-custom">
-              <p className="font-thin text-white text-2xl">Работаю с 2019 года</p>
-              <p className="font-thin text-white text-2xl">30+ проектов</p>
-              <p className="font-thin text-white text-2xl">5 крупных проектов</p>
+              <p className="font-light text-white text-2xl">Работаю с 2019 года</p>
+              <p className="font-light text-white text-2xl">30+ проектов</p>
+              <p className="font-light text-white text-2xl">5 крупных проектов</p>
             </div>
           </div>
 
@@ -55,13 +55,13 @@ export default function Home() {
           {/* Right Column - Aligns with right edge of heading */}
           <div className="flex flex-col items-end gap-12 flex-shrink-0 animate-in fade-in duration-700" style={{ maxWidth: '280px', textAlign: 'right' }}>
             {/* Message Block 1 */}
-            <p className="font-thin text-white text-2xl text-right leading-custom">
+            <p className="font-light text-white text-2xl text-right leading-custom">
               Здесь я собрал работы,<br />которыми горжусь
             </p>
 
             {/* Message Block 2 with Contact Links */}
             <div className="flex flex-col items-end gap-4 animate-in fade-in duration-700 delay-200">
-              <p className="font-thin text-white text-2xl text-right leading-custom">
+              <p className="font-light text-white text-2xl text-right leading-custom">
                 Пообщаться со мной<br />можно тут
               </p>
 
@@ -108,7 +108,7 @@ export default function Home() {
       {/* Projects Button - Fixed Bottom Left */}
       <Link
         href="/projects"
-        className="hidden md:flex absolute left-8 lg:left-12 bottom-8 lg:bottom-12 items-center gap-3 px-7 py-6 rounded-2xl cursor-pointer transition-all duration-300 group z-20 animate-in fade-in w-[500px] h-[104px] bg-[#AFFC41] hover:opacity-90 hover:scale-110 overflow-hidden"
+        className="hidden md:flex absolute left-8 lg:left-12 bottom-8 lg:bottom-12 items-center gap-3 px-10 py-6 rounded-2xl cursor-pointer transition-all duration-300 group z-20 animate-in fade-in w-[500px] h-[104px] bg-[#AFFC41] hover:opacity-90 hover:scale-110 overflow-hidden"
       >
         <span className="font-light text-[#00060A] text-2xl relative z-10">Проекты</span>
         <div className="ml-auto inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#00060A] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 relative z-10">
@@ -167,16 +167,16 @@ export default function Home() {
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight text-base">Работаю с 2019 года</p>
-            <p className="font-thin text-white leading-tight text-base">30+ проектов</p>
-            <p className="font-thin text-white leading-tight text-base">5 крупных проектов</p>
+            <p className="font-light text-white leading-tight text-base">Работаю с 2019 года</p>
+            <p className="font-light text-white leading-tight text-base">30+ проектов</p>
+            <p className="font-light text-white leading-tight text-base">5 крупных проектов</p>
           </div>
 
           <div className="space-y-0.5">
-            <p className="font-thin text-white leading-tight text-base">
+            <p className="font-light text-white leading-tight text-base">
               Здесь я собрал работы, которыми горжусь
             </p>
-            <p className="font-thin text-white leading-tight text-base">
+            <p className="font-light text-white leading-tight text-base">
               Пообщаться со мной можно тут
             </p>
           </div>
@@ -186,17 +186,35 @@ export default function Home() {
               href="https://t.me/RossolovDesign"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-full bg-[#AFFC41] text-[#00060A] font-light hover:opacity-90 active:opacity-90 transition-all"
+              className="px-4 py-2 rounded-full border border-[#affc41] text-[#affc41] font-light transition-all duration-300 inline-flex items-center gap-2 hover:bg-[#affc41] hover:text-[#00060a] active:bg-[#affc41] active:text-[#00060a] group"
               style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}
             >
               TELEGRAM
+              <svg
+                className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M7 17L17 7M17 7H7m10 0V17" />
+              </svg>
             </a>
             <a
               href="mailto:rossolovdesign@gmail.com"
-              className="px-3 py-1.5 rounded-full bg-[#AFFC41] text-[#00060A] font-light hover:opacity-90 active:opacity-90 transition-all"
+              className="px-4 py-2 rounded-full border border-[#affc41] text-[#affc41] font-light transition-all duration-300 inline-flex items-center gap-2 hover:bg-[#affc41] hover:text-[#00060a] active:bg-[#affc41] active:text-[#00060a] group"
               style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}
             >
               EMAIL
+              <svg
+                className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M7 17L17 7M17 7H7m10 0V17" />
+              </svg>
             </a>
           </div>
 
@@ -217,9 +235,9 @@ export default function Home() {
       {/* Mobile Projects Button - Fixed to bottom */}
       <Link
         href="/projects"
-        className="md:hidden fixed bottom-7 left-7 right-7 max-[740px]:bottom-4 max-[740px]:left-5 max-[740px]:right-5 z-30 px-6 max-[740px]:px-5 py-4 max-[740px]:py-3 rounded-2xl cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[#AFFC41] hover:opacity-90 active:opacity-90 hover:scale-110 active:scale-110 overflow-hidden"
+        className="md:hidden fixed bottom-7 left-7 right-7 max-[740px]:bottom-4 max-[740px]:left-5 max-[740px]:right-5 z-30 px-9 max-[740px]:px-8 py-5 max-[740px]:py-4 rounded-2xl cursor-pointer transition-all duration-300 group flex items-center gap-3 bg-[#AFFC41] hover:opacity-90 active:opacity-90 hover:scale-110 active:scale-110 overflow-hidden"
       >
-        <span className="font-light text-[#00060A] text-lg max-[740px]:text-base relative z-10">Проекты</span>
+        <span className="font-light text-[#00060A] relative z-10" style={{ fontSize: 'clamp(14px, 4vw, 16px)' }}>Проекты</span>
         <div className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#00060A] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-active:translate-x-1 group-active:-translate-y-1 relative z-10">
           <svg
             className="w-4 h-4 text-white"

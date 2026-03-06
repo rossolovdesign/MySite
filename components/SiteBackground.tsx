@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 
-/** Общий фон сайта: цвет #4D4D4D, сетка 60px. Пятно только на главной. */
+/** Общий фон сайта: цвет #333333, сетка 60px. Пятно только на главной. */
 export function SiteBackground() {
   const pathname = usePathname()
   const isHome = pathname === '/' || pathname === '/en'
@@ -10,7 +10,7 @@ export function SiteBackground() {
   return (
     <>
       <div
-        className="fixed inset-0 z-0 pointer-events-none bg-[#4D4D4D]"
+        className="fixed inset-0 z-0 pointer-events-none bg-[#333333]"
         aria-hidden
       />
       {/* Сетка */}

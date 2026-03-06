@@ -653,10 +653,10 @@ export function ProjectDetailView({
             {/* Left: images. Mobile — стопка (одна картинка), desktop — скролл. */}
             <div className="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
               <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-                {/* Mobile: свайп-галерея на всю ширину без скруглений. Карточка фиксирована на 35vh снизу. */}
+                {/* Mobile: свайп-галерея на всю ширину без скруглений. Два бара фиксированы снизу. */}
                 <div
                   ref={mobileGalleryRef}
-                  className="lg:hidden flex-1 min-h-0 flex items-center justify-start overflow-hidden pt-[calc(2rem+env(safe-area-inset-top))] pb-[35vh] touch-pan-y w-full min-w-0"
+                  className="lg:hidden flex-1 min-h-0 flex items-center justify-start overflow-hidden pt-[calc(2rem+env(safe-area-inset-top))] pb-[38vh] touch-pan-y w-full min-w-0"
                   onTouchStart={handleMobileTouchStart}
                   onTouchEnd={handleMobileTouchEnd}
                   onTouchCancel={handleMobileTouchEnd}
@@ -754,9 +754,9 @@ export function ProjectDetailView({
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden transition-opacity duration-300 scrollbar-hide">
                 {activeScene ? (
                   <div className="space-y-4">
-                    <h2 className="text-white font-thin text-3xl leading-custom">{activeScene.title}</h2>
+                    <h2 className="text-white font-light text-3xl leading-custom">{activeScene.title}</h2>
                     {activeScene.description && (
-                      <p className="text-white font-thin text-base leading-relaxed">{activeScene.description}</p>
+                      <p className="text-white font-light text-base leading-relaxed">{activeScene.description}</p>
                     )}
                   </div>
                 ) : (
@@ -777,7 +777,7 @@ export function ProjectDetailView({
                 )}
               </div>
 
-              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-white/20 bg-white/10 backdrop-blur-xl px-5 pt-8 pb-8">
+              <div className="flex-shrink-0 mt-8 rounded-[20px] border border-white/30 bg-[#333333] px-5 pt-8 pb-8">
                 <Link
                   href={projectsHref}
                   className="inline-flex items-center gap-1 text-white/80 hover:text-[#affc41] transition-colors font-light text-lg"
@@ -787,10 +787,9 @@ export function ProjectDetailView({
                   </svg>
                   {copy.toProjects}
                 </Link>
-                <div className="mt-3 border-t border-white/15" aria-hidden />
-                <h1 className="text-white/95 font-thin text-xl leading-snug mt-3">{project.title}</h1>
+                <h1 className="text-white/95 font-light text-xl leading-snug mt-3">{project.title}</h1>
                 {project.collaboration?.url && project.collaboration.title && (
-                  <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-thin">
+                  <p className="mt-[2px] text-sm leading-relaxed text-white/70 font-light">
                     {copy.collaborationWith}{' '}
                     <a
                       href={project.collaboration.url}
@@ -864,7 +863,7 @@ export function ProjectDetailView({
           </div>
 
           <div
-            className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] pt-3 bg-gradient-to-t from-[#4D4D4D]/95 via-[#4D4D4D]/65 to-transparent"
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] pt-3 bg-gradient-to-t from-[#333333]/95 via-[#333333]/65 to-transparent"
             style={{
               paddingLeft: MOBILE_SAFE_PAD_X_LEFT,
               paddingRight: MOBILE_SAFE_PAD_X_RIGHT,
@@ -960,80 +959,77 @@ export function ProjectDetailView({
         </div>
       )}
 
-      {/* Mobile: фиксированная карточка 35% экрана, края в край экрана */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 h-[35vh] flex flex-col">
-        <div className="flex-1 min-h-0 rounded-t-[20px] border border-white/20 border-b-0 bg-white/10 backdrop-blur-xl px-4 pt-4 pb-0 overflow-y-auto scrollbar-hide flex flex-col items-stretch">
-          <div className="pb-2 flex-shrink-0">
-            <div className="flex items-center justify-between gap-3">
-              <Link
-                href={projectsHref}
-                className="inline-flex h-9 items-center gap-1 text-white/80 active:text-[#affc41] transition-colors font-light text-sm"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                {copy.toProjects}
-              </Link>
-              {preparedScenes.length > 1 && (
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
-                    disabled={!hasPrevScene}
-                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#4D4D4D]/45 disabled:opacity-35 disabled:cursor-not-allowed"
-                    aria-label={copy.prevScene}
-                  >
-                    <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <span className="min-w-[2.5rem] text-center text-sm font-thin text-white/70 tabular-nums">
-                    {activeIndex + 1} / {preparedScenes.length}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
-                    disabled={!hasNextScene}
-                    className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#4D4D4D]/45 disabled:opacity-35 disabled:cursor-not-allowed"
-                    aria-label={copy.nextScene}
-                  >
-                    <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="mt-3 border-t border-white/15" aria-hidden />
-            <div className="mt-3 inline-flex max-w-full items-center gap-4">
-              <p className="max-w-[55vw] text-white/90 font-thin text-sm leading-relaxed truncate">{project.title}</p>
-              {project.collaboration?.url && project.collaboration.title && (
-                <p className="text-sm leading-relaxed text-white/75 font-thin whitespace-nowrap">
-                  {copy.collaborationWith}{' '}
-                  <a
-                    href={project.collaboration.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#affc41] font-light underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
-                  >
-                    {project.collaboration.title}
-                  </a>
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="pt-2">
-            <div className="min-w-0">
-              <p className="text-white font-thin text-lg leading-snug">
-                {activeScene ? activeScene.title : project.title}
-              </p>
-            </div>
-          </div>
+      {/* Mobile: два отдельных бара — контент сверху, контроллы и инфо снизу */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex flex-col gap-4 px-4 pb-4" style={{ paddingBottom: `max(16px, env(safe-area-inset-bottom))` }}>
+        {/* Бар 1: контент сцены */}
+        <div className="rounded-[20px] px-4 py-6 overflow-y-auto scrollbar-hide max-h-[25vh] min-h-0">
+          <p className="text-white font-light text-lg leading-snug">
+            {activeScene ? activeScene.title : project.title}
+          </p>
           {activeScene?.description && (
-            <p className="text-white/75 font-thin text-sm leading-relaxed mt-[2px]">
+            <p className="text-white/75 font-light text-sm leading-relaxed mt-[2px]">
               {activeScene.description}
             </p>
           )}
+        </div>
+        {/* Бар 2: контроллы, название проекта, в составе */}
+        <div className="rounded-[20px] border border-white/30 bg-[#333333] px-4 py-6 flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              href={projectsHref}
+              className="inline-flex h-9 items-center gap-1 text-white/80 active:text-[#affc41] transition-colors font-light text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              {copy.toProjects}
+            </Link>
+            {preparedScenes.length > 1 && (
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => goToSection(Math.max(activeIndex - 1, 0))}
+                  disabled={!hasPrevScene}
+                  className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#333333]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                  aria-label={copy.prevScene}
+                >
+                  <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span className="min-w-[2.5rem] text-center text-sm font-light text-white/70 tabular-nums">
+                  {activeIndex + 1} / {preparedScenes.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => goToSection(Math.min(activeIndex + 1, preparedScenes.length - 1))}
+                  disabled={!hasNextScene}
+                  className="h-9 w-9 rounded-full border border-white/40 text-white bg-[#333333]/45 disabled:opacity-35 disabled:cursor-not-allowed"
+                  aria-label={copy.nextScene}
+                >
+                  <svg className="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="inline-flex max-w-full items-center gap-4 flex-wrap">
+            <p className="text-white/90 font-light text-sm leading-relaxed truncate">{project.title}</p>
+            {project.collaboration?.url && project.collaboration.title && (
+              <p className="text-sm leading-relaxed text-white/75 font-light whitespace-nowrap">
+                {copy.collaborationWith}{' '}
+                <a
+                  href={project.collaboration.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#affc41] font-light underline decoration-[#affc41]/60 underline-offset-2 active:text-white transition-colors"
+                >
+                  {project.collaboration.title}
+                </a>
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </main>
